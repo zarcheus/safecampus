@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SafeCampus Enterprise — Melchora Aquino High School Hazard Intelligence</title>
+<style>
+  :root {
+    --navy-900: #07172b;
+    --navy-800: #0b2545;
+    --navy-700: #13315c;
+    --navy-600: #1d4e89;
+    --gold-500: #f4b41a;
+    --gold-400: #ffd65c;
+    --gold-600: #d99a07;
+    --red-500: #ef4444;
+    --red-100: #fee2e2;
+    --amber-500: #f59e0b;
+    --amber-100: #fef3c7;
+    --emerald-500: #10b981;
+    --emerald-100: #d1fae5;
+    --blue-500: #3b82f6;
+    --blue-100: #dbeafe;
+    --bg-main: #f1f5f9;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --border: #e2e8f0;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --shadow-md: 0 10px 25px -5px rgba(11, 37, 69, 0.1);
+    --shadow-lg: 0 20px 35px -10px rgba(11, 37, 69, 0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body { background: var(--bg-main); color: var(--text-primary); line-height: 1.5; }
+
+  /* ANIMATIONS FOR IN PROGRESS STATE */
+  @keyframes ping-dot {
+    0% { transform: scale(1); opacity: 1; }
+    75%, 100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  @keyframes progress-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes alert-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* DATA SAVER MODE STYLES */
+  body.data-saver-mode header {
+    background: var(--navy-900) !important;
+  }
+  body.data-saver-mode .brand-logo img,
+  body.data-saver-mode .report-photo-thumb {
+    display: none !important;
+  }
+
+  /* EMERGENCY BROADCAST BANNER (HIDDEN BY DEFAULT, SHOWN WHEN ADMIN ACTIVATES IT) */
+  .emergency-broadcast-banner {
+    background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
+    color: #ffffff; padding: 12px 24px; display: none; justify-content: space-between;
+    align-items: center; border-bottom: 3px solid var(--gold-500); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    position: relative; z-index: 90; transition: all 0.3s ease;
+  }
+  .broadcast-content { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.9rem; flex-wrap: wrap; }
+  .broadcast-tag {
+    background: #fef08a; color: #991b1b; padding: 3px 10px; border-radius: 4px;
+    font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;
+    animation: alert-pulse 1.5s infinite; flex-shrink: 0;
+  }
+  .broadcast-close {
+    background: transparent; border: none; color: #fff; font-size: 1.4rem;
+    cursor: pointer; opacity: 0.8; padding: 0 6px; line-height: 1;
+  }
+  .broadcast-close:hover { opacity: 1; }
+
+  /* ADVISORY & NETWORK BAR */
+  .advisory-bar {
+    background: #1e293b; color: #f8fafc; padding: 8px 16px; font-size: 0.82rem; font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold-500);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .advisory-content { display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .advisory-tag { background: var(--gold-500); color: var(--navy-900); padding: 2px 8px; border-radius: 4px; font-weight: 800; font-size: 0.72rem; text-transform: uppercase; }
+  
+  .network-badge {
+    padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .net-online { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+  .net-offline { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+  /* HEADER & BRANDING */
+  header {
+    background: url('https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/235259311_184194087105316_7652030335852235611_n.png?stp=dst-png&cstp=mx1640x924&ctp=s1640x924&_nc_cat=101&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeE2shuIEyruuD3Hxy9sASpP2DW5WmJXQ77YNblaYldDvttXnqGBnrizlKfnnByrWdYCEFH8bJi1DcJA54pGqbHS&_nc_ohc=uELPyLzrxYsQ7kNvwFQUzs9&_nc_oc=AdrAkzSLPThOOEZy50P7bVUzgjBYBBaiKupjFVttwUtG_U99m6F6HoeBkdaAmRxhkQ8&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=DwaBX0nbZ45GEiQaUSufjg&_nc_ss=7b2a8&oh=00_AQMeVqoxclgRKxvTKu6LDJ-neIsBuGAhgaTvOp90NRiobw&oe=6AC420F9') no-repeat center top;
+    background-size: cover;
+    color: #fff; padding-bottom: 70px; position: relative; overflow: hidden;
+    border-bottom: 4px solid var(--gold-500);
+  }
+
+  header::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(7, 23, 43, 0.7) 0%, rgba(11, 37, 69, 0.6) 60%, rgba(7, 23, 43, 0.9) 100%);
+    pointer-events: none; z-index: 1;
+  }
+  header .top-nav, header .hero { position: relative; z-index: 2; }
+  
+  .top-nav {
+    max-width: 1280px; margin: 0 auto; padding: 16px 24px; display: flex;
+    justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.18);
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-logo {
+    width: 62px; height: 62px; border-radius: 50%; background: #ffffff;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    box-shadow: 0 0 0 3px var(--gold-500), 0 6px 20px rgba(0,0,0,0.4); border: 2px solid #ffffff; flex-shrink: 0;
+  }
+  .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-text h1 { font-size: 1.2rem; font-weight: 800; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.8); color: #ffffff; }
+  .brand-text p { font-size: 0.8rem; color: var(--gold-400); font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+  
+  .nav-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+  }
+  .btn-primary { background: var(--gold-500); color: var(--navy-900); }
+  .btn-primary:hover { background: var(--gold-400); }
+  .btn-export { background: #059669; color: #ffffff; }
+  .btn-export:hover { background: #047857; }
+  .btn-outline { background: rgba(7, 23, 43, 0.4); color: #fff; border: 1px solid rgba(255,255,255,0.4); backdrop-filter: blur(6px); }
+  .btn-outline:hover { background: rgba(255,255,255,0.25); }
+  .btn-admin { background: #38bdf8; color: var(--navy-900); }
+  .btn-fb { background: #1877f2; color: #ffffff; }
+  .btn-lite { background: #10b981; color: #ffffff; }
+
+  .hero { max-width: 1280px; margin: 0 auto; padding: 28px 24px 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
+  .hero-text h2 { font-size: 2.1rem; font-weight: 800; line-height: 1.25; margin-bottom: 8px; text-shadow: 0 2px 8px rgba(0,0,0,0.85); color: #fff; }
+  .hero-text h2 span { color: var(--gold-400); }
+  .hero-text p { max-width: 680px; opacity: 0.95; font-size: 0.95rem; text-shadow: 0 1px 4px rgba(0,0,0,0.85); color: #f1f5f9; }
+
+  /* SCHOOL INFO HUB BAR */
+  .school-info-bar { max-width: 1280px; margin: 16px auto 0; padding: 0 24px; position: relative; z-index: 5; }
+  .info-hub-card {
+    background: rgba(11, 37, 69, 0.88); backdrop-filter: blur(10px); border: 1px solid rgba(244, 180, 26, 0.3);
+    border-radius: var(--radius-md); padding: 14px 20px; color: #fff; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+  .info-hub-item { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+  .info-hub-item i { font-size: 1.2rem; }
+  .info-hub-item strong { color: var(--gold-400); display: block; font-size: 0.75rem; text-transform: uppercase; }
+
+  /* EMERGENCY HOTLINE STRIP */
+  .hotline-strip {
+    background: #fff; border-bottom: 1px solid var(--border); padding: 10px 24px; font-size: 0.8rem;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px; color: var(--text-secondary);
+  }
+  .hotline-chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--navy-800); }
+  .hotline-chip span { color: var(--red-500); }
+
+  /* LAYOUT */
+  .container { max-width: 1280px; margin: 24px auto 60px; padding: 0 24px; position: relative; z-index: 10; }
+  .grid-layout { display: grid; grid-template-columns: 460px 1fr; gap: 28px; }
+
+  .card { background: var(--card-bg); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow-md); border: 1px solid var(--border); }
+  .card-header h3 { font-size: 1.25rem; font-weight: 700; color: var(--navy-800); }
+  .card-header p { font-size: 0.82rem; color: var(--text-secondary); margin-top: 2px; }
+
+  /* FORM STYLING */
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--navy-800); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  input[type="text"], input[type="date"], input[type="password"], select, textarea {
+    width: 100%; padding: 11px 14px; border: 2px solid var(--border); border-radius: var(--radius-md);
+    font-size: 0.9rem; background: #f8fafc; color: var(--text-primary); transition: all 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy-600); background: #fff; }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  
+  .chips-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .chip-item {
+    padding: 8px 10px; border-radius: var(--radius-md); border: 1.5px solid var(--border);
+    background: #f8fafc; font-size: 0.8rem; font-weight: 600; text-align: center; cursor: pointer; transition: 0.2s; user-select: none;
+  }
+  .chip-item.active { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+
+  .sev-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .sev-group input { display: none; }
+  .sev-btn {
+    text-align: center; padding: 10px 4px; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 700;
+    border: 2px solid var(--border); background: #f8fafc; cursor: pointer; transition: 0.2s;
+  }
+  .sev-group input:checked + .sev-low { background: var(--emerald-100); border-color: var(--emerald-500); color: #065f46; }
+  .sev-group input:checked + .sev-med { background: var(--amber-100); border-color: var(--amber-500); color: #92400e; }
+  .sev-group input:checked + .sev-high { background: var(--red-100); border-color: var(--red-500); color: #991b1b; }
+
+  .upload-area {
+    border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 16px; text-align: center;
+    background: #f8fafc; cursor: pointer; transition: 0.2s; position: relative;
+  }
+  .upload-area p { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+  #photoPreviewContainer { margin-top: 10px; display: none; position: relative; width: 100%; height: 120px; border-radius: 8px; overflow: hidden; }
+  #photoPreviewContainer img { width: 100%; height: 100%; object-fit: cover; }
+  .remove-photo-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
+
+  .checkbox-anon { display: flex; align-items: center; gap: 8px; font-size: 0.83rem; color: var(--text-secondary); cursor: pointer; }
+
+  /* BUTTON ACTION ROW */
+  .submit-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .submit-btn {
+    width: 100%; padding: 14px; background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
+    color: var(--navy-900); font-weight: 800; font-size: 0.92rem; border: none; border-radius: var(--radius-md);
+    cursor: pointer; box-shadow: 0 6px 16px rgba(244,180,26,0.3); transition: 0.2s;
+  }
+  .sms-btn {
+    width: 100%; padding: 12px; background: #0284c7; color: #ffffff; font-weight: 700; font-size: 0.85rem;
+    border: none; border-radius: var(--radius-md); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none;
+  }
+  .sms-btn:hover { background: #0369a1; }
+
+  /* DASHBOARD METRICS */
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+  .metric-card { background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center; position: relative; }
+  .metric-card.highlight { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+  .metric-card.highlight .metric-num { color: var(--gold-400); }
+  .metric-card.metric-progress-active {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+  }
+  .metric-num { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--navy-900); }
+  .metric-lbl { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-top: 6px; }
+
+  /* FEED CONTROLS & EXPORT TOOLBAR */
+  .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .search-box { flex: 1; min-width: 180px; }
+  .filter-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+  .filter-pill {
+    padding: 6px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; border: 1px solid var(--border);
+    background: #fff; cursor: pointer; transition: 0.2s; white-space: nowrap; color: var(--text-secondary);
+  }
+  .filter-pill.active { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+
+  /* REPORT FEED LIST */
+  .reports-feed { display: flex; flex-direction: column; gap: 14px; max-height: 620px; overflow-y: auto; padding-right: 4px; }
+  .report-card {
+    border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; background: #fff;
+    border-left: 5px solid var(--border); display: flex; flex-direction: column; gap: 10px; transition: all 0.3s ease;
+  }
+  .report-card.sev-High { border-left-color: var(--red-500); }
+  .report-card.sev-Medium { border-left-color: var(--amber-500); }
+  .report-card.sev-Low { border-left-color: var(--emerald-500); }
+
+  .report-card.status-in-progress {
+    border-left-color: var(--amber-500) !important;
+    background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .report-card.status-in-progress::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 200%; height: 3px;
+    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+    animation: progress-shimmer 2.5s infinite linear;
+  }
+  
+  .report-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .report-title { font-weight: 700; font-size: 0.95rem; color: var(--navy-900); display: flex; align-items: center; gap: 8px; }
+  .report-badges { display: flex; gap: 6px; align-items: center; }
+  .badge-tag { font-size: 0.68rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+  
+  .bg-high { background: var(--red-100); color: #991b1b; }
+  .bg-med { background: var(--amber-100); color: #92400e; }
+  .bg-low { background: var(--emerald-100); color: #065f46; }
+  .bg-open { background: var(--red-100); color: #991b1b; }
+  .bg-resolved { background: var(--emerald-100); color: #065f46; }
+
+  .bg-in-progress-animated {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 800;
+  }
+
+  .pulse-indicator {
+    position: relative;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background-color: #f59e0b;
+    border-radius: 50%;
+  }
+
+  .pulse-indicator::after {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background-color: #f59e0b;
+    animation: ping-dot 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .report-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+  .report-photo-thumb { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; margin-top: 4px; }
+  .report-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid #f1f5f9; padding-top: 8px; }
+  .admin-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); background: #f8fafc; padding: 8px; border-radius: 6px; flex-wrap: wrap; }
+  .admin-actions label { margin-bottom: 0; font-size: 0.72rem; color: var(--navy-800); }
+  .admin-status-select { padding: 4px 8px; font-size: 0.75rem; border-radius: 6px; border: 1px solid var(--border); background: #fff; font-weight: bold; cursor: pointer; }
+  
+  .btn-delete-report {
+    background: var(--red-500);
+    color: #ffffff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: auto;
+    transition: background 0.2s ease;
+  }
+  .btn-delete-report:hover {
+    background: #dc2626;
+  }
+
+  /* ANALYTICS BAR CHART */
+  .analytics-card { margin-top: 24px; padding: 18px; background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); }
+  .chart-bars { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .chart-row { display: flex; align-items: center; gap: 10px; font-size: 0.78rem; font-weight: 700; color: var(--navy-800); }
+  .chart-label { width: 95px; flex-shrink: 0; text-align: right; }
+  .chart-track { flex: 1; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+  .chart-fill { height: 100%; background: var(--navy-600); border-radius: 999px; transition: width 0.4s ease; }
+  .chart-val { width: 24px; font-size: 0.78rem; text-align: left; color: var(--text-secondary); }
+
+  /* MODALS & TOAST */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75);
+    display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box { background: #fff; border-radius: var(--radius-lg); width: 90%; max-width: 480px; padding: 28px; box-shadow: var(--shadow-lg); }
+
+  #toast {
+    position: fixed; bottom: 30px; right: 30px; background: var(--navy-900); color: #fff;
+    padding: 14px 22px; border-radius: var(--radius-md); font-size: 0.88rem; font-weight: 600;
+    box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; border-left: 4px solid var(--gold-500);
+    transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 200;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  @media(max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+  @media(max-width: 768px) {
+    header { padding-bottom: 40px; }
+    .top-nav { flex-direction: column; align-items: flex-start; gap: 14px; padding: 14px 16px; }
+    .nav-controls { width: 100%; justify-content: flex-start; }
+    .hero { padding: 20px 16px 0; }
+    .school-info-bar { padding: 0 16px; }
+    .container { padding: 0 16px; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .row-2 { grid-template-columns: 1fr; }
+    .chips-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- EMERGENCY BROADCAST BANNER (HIDDEN UNTIL ADMIN ACTIVATES & TYPES AN INCIDENT) -->
+<div class="emergency-broadcast-banner" id="emergencyBroadcastBanner">
+  <div class="broadcast-content">
+    <span class="broadcast-tag">🚨 Campus Emergency Alert</span>
+    <span id="broadcastText"></span>
+  </div>
+  <button class="broadcast-close" id="btnCloseBroadcast" type="button" title="Dismiss Alert">&times;</button>
+</div>
+
+<!-- ADVISORY & NETWORK STATUS BAR -->
+<div class="advisory-bar">
+  <div class="advisory-content">
+    <span class="advisory-tag">DepEd Advisory</span>
+    <span id="advisoryText">Melchora Aquino High School SafeCampus Active — Keep campus pathways clear.</span>
+  </div>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <span class="network-badge net-online" id="netBadge">🟢 Online Mode</span>
+    <span style="font-size:0.75rem; opacity:0.8;">Tandang Sora, QC</span>
+  </div>
+</div>
+
+<!-- HEADER / BRANDING -->
+<header>
+  <div class="top-nav">
+    <div class="brand">
+      <div class="brand-logo">
+        <img src="https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/271920569_288414643349926_5633214937411212534_n.jpg?stp=dst-jpg_tt6&cstp=mx957x960&ctp=s957x960&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGYdDe0ohyyOy3gioVbVAM_3ko4wC7LJureSjjALssm6hGCEIsOYdJEcaWAop7LUW7k4FR5c3WaZXr4Ze6ACTbO&_nc_ohc=08uTluUVTA0Q7kNvwE83lOs&_nc_oc=AdrFaslWgd3zBf9hPXjVyykN2jCisk0nu6knQcEHOH6zcy7Rc0xByMuG5WkEheVNtJc&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=pFtgDG74YBDgx8JQ-d96Iw&_nc_ss=7b2a8&oh=00_AQMiXrSly5aKobY43RSZ8XH7I0wi8SIUd03p-mSkTCKefw&oe=6AC427DF" id="schoolLogoImg" alt="MAHS Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%230b2545\'><circle cx=\'50\' cy=\'50\' r=\'46\' stroke=\'%23f4b41a\' stroke-width=\'6\'/><text x=\'50%\' y=\'58%\' font-size=\'22\' text-anchor=\'middle\' fill=\'%23f4b41a\' font-weight=\'900\' font-family=\'sans-serif\'>MAHS</text></svg>';" />
+      </div>
+      <div class="brand-text">
+        <h1>MELCHORA AQUINO HIGH SCHOOL</h1>
+        <p>SafeCampus Hazard Reporting & Facilities Portal</p>
+      </div>
+    </div>
+    <div class="nav-controls">
+      <button class="btn btn-lite" id="btnToggleDataSaver" type="button" title="Toggle Low-Data Mode for slow signal">⚡ Data Saver: OFF</button>
+      <a href="https://www.facebook.com/MelchoraAquinoHS" target="_blank" rel="noopener noreferrer" class="btn btn-fb">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> FB Page
+      </a>
+      <button class="btn btn-admin" id="btnAdminAuth" type="button">🔑 Admin Mode: OFF</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-text">
+      <h2>Campus Safety & Incident <span>Intelligence System</span></h2>
+      <p>Report hazards instantly, monitor campus maintenance progress, and assist facilities management in keeping Melchora Aquino High School safe.</p>
+    </div>
+  </div>
+
+  <!-- SCHOOL INFORMATION HUB -->
+  <div class="school-info-bar">
+    <div class="info-hub-card">
+      <div class="info-hub-item">
+        <i>🏫</i>
+        <div>
+          <strong>Division & Campus</strong>
+          DepEd Division of City Schools – Quezon City (NCR)
+        </div>
+      </div>
+      <div class="info-hub-item">
+        <i>📍</i>
+        <div>
+          <strong>Address Location</strong>
+          179 Denmark Street, Upper Banlat, Tandang Sora, Quezon City
+        </div>
+      </div>
+      <div class="info-hub-item">
+        <i>🎓</i>
+        <div>
+          <strong>Curriculum Offers</strong>
+          Junior High School (JHS) & Senior High (STEM, ABM, HUMSS, TVL)
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- EMERGENCY HOTLINE STRIP -->
+<div class="hotline-strip">
+  <span>🚨 <strong>Rapid Emergency Contacts:</strong></span>
+  <div class="hotline-chip">Clinic: <span>Local 102</span></div>
+  <div class="hotline-chip">DRRM Hotline: <span>0917-123-7233</span></div>
+  <div class="hotline-chip">QC Emergency: <span>122</span></div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<main class="container">
+  <div class="grid-layout">
+    
+    <!-- LEFT PANEL: REPORT FORM -->
+    <section class="card form-card">
+      <div class="card-header">
+        <h3>Report a Safety Hazard</h3>
+        <p>Fill in details to alert school maintenance. (Works offline & low-data!)</p>
+      </div>
+
+      <form id="hazardForm">
+        <div class="form-group">
+          <label>Reporter Name / Section *</label>
+          <input type="text" id="reporterName" placeholder="e.g. Jay Martin Manaba (Grade 12 - STEM)" required />
+          <div style="margin-top:8px;">
+            <label class="checkbox-anon">
+              <input type="checkbox" id="anonToggle" />
+              <span>Submit anonymously</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Hazard Category *</label>
+          <div class="chips-grid" id="categoryChips">
+            <div class="chip-item active" data-cat="Electrical">⚡ Electrical</div>
+            <div class="chip-item" data-cat="Structural">🏚️ Structural</div>
+            <div class="chip-item" data-cat="Slip/Fall">💧 Slip/Fall</div>
+            <div class="chip-item" data-cat="Fire Safety">🔥 Fire Safety</div>
+            <div class="chip-item" data-cat="Sanitation">🧹 Sanitation</div>
+            <div class="chip-item" data-cat="Security">🔒 Security</div>
+          </div>
+        </div>
+
+        <div class="row-2 form-group">
+          <div>
+            <label>Building / Area *</label>
+            <input type="text" id="buildingZone" placeholder="e.g. Bautista Building" required />
+          </div>
+          <div>
+            <label>Specific Location / Room *</label>
+            <input type="text" id="location" placeholder="e.g. Room 302, 3rd Floor" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Date Observed *</label>
+          <input type="date" id="dateObserved" required />
+        </div>
+
+        <div class="form-group">
+          <label>Severity Level *</label>
+          <div class="sev-group">
+            <label>
+              <input type="radio" name="severity" value="Low" />
+              <div class="sev-btn sev-low">🟢 Low</div>
+            </label>
+            <label>
+              <input type="radio" name="severity" value="Medium" checked />
+              <div class="sev-btn sev-med">🟡 Medium</div>
+            </label>
+            <label>
+              <input type="radio" name="severity" value="High" />
+              <div class="sev-btn sev-high">🔴 High</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Photo Evidence (Optional)</label>
+          <div class="upload-area" id="uploadZone">
+            <span style="font-size:24px;">📸</span>
+            <p>Click or tap to upload photo proof</p>
+            <input type="file" id="photoInput" accept="image/*" style="display:none;" />
+            <div id="photoPreviewContainer">
+              <img id="photoPreviewImg" src="" alt="Hazard preview" />
+              <button type="button" class="remove-photo-btn" id="btnRemovePhoto">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Detailed Description *</label>
+          <textarea id="description" rows="3" placeholder="Describe the specific risk or hazard..." required></textarea>
+        </div>
+
+        <div class="submit-btn-row">
+          <button type="submit" class="submit-btn" id="submitBtn">🚀 SUBMIT INCIDENT REPORT</button>
+          <button type="button" class="sms-btn" id="btnSMSFallback">📱 NO LOAD / NO INTERNET? SEND VIA SMS TEXT</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RIGHT PANEL: DASHBOARD & LIVE FEED -->
+    <section class="card">
+      <div class="metrics-grid">
+        <div class="metric-card highlight">
+          <div class="metric-num" id="mTotal">0</div>
+          <div class="metric-lbl">Total Filed</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" style="color:var(--red-500)" id="mOpen">0</div>
+          <div class="metric-lbl">Action Req.</div>
+        </div>
+        <div class="metric-card" id="mProgressCard">
+          <div class="metric-num" style="color:var(--amber-500)" id="mProgress">0</div>
+          <div class="metric-lbl" style="display:flex; align-items:center; justify-content:center; gap:4px;">
+            <span id="mProgressIndicator" class="pulse-indicator" style="display:none;"></span>
+            In Progress
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" style="color:var(--emerald-500)" id="mResolved">0</div>
+          <div class="metric-lbl">Resolved</div>
+        </div>
+      </div>
+
+      <!-- CATEGORY BREAKDOWN BARS -->
+      <div class="analytics-card">
+        <h4 style="font-size:0.9rem; color:var(--navy-800); margin-bottom:2px;">Hazard Category Breakdown</h4>
+        <p style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:8px;">Live distribution of logged hazards across MAHS campus.</p>
+        <div class="chart-bars" id="categoryChartBars">
+          <!-- Dynamically populated category count bars -->
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-top:20px;">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="🔍 Search location, building, keyword..." />
+        </div>
+        <div class="filter-pills" id="filterPills">
+          <div class="filter-pill active" data-filter="All">All</div>
+          <div class="filter-pill" data-filter="Open">Open</div>
+          <div class="filter-pill" data-filter="In Progress">In Progress</div>
+          <div class="filter-pill" data-filter="Resolved">Resolved</div>
+        </div>
+        <button class="btn btn-export" id="btnExportCSV" type="button" title="Download reports as Excel CSV">
+          📊 Export CSV
+        </button>
+      </div>
+
+      <div class="reports-feed" id="reportsList"></div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ADMIN AUTH MODAL (WITH BROADCAST BANNER CONTROL) -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-box">
+    <h4>🔒 Administrative Access</h4>
+    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">Enter admin passcode to update status, export data, or publish emergency broadcasts.</p>
+    <div class="form-group">
+      <label>Passcode</label>
+      <input type="password" id="adminPasscode" placeholder="Enter admin passcode" />
+    </div>
+
+    <!-- ADMIN BROADCAST CONTROL -->
+    <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--border);">
+      <label style="color:var(--red-500); font-size:0.75rem; font-weight:800;">🚨 Activate Campus Emergency Broadcast</label>
+      <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:6px;">Type an incident message below and tap "Push Broadcast" to show the alert banner campus-wide.</p>
+      <input type="text" id="adminBroadcastInput" placeholder="e.g. Caution: Wet floors near Science Lab 2. Exercise care." style="margin-top: 4px;" />
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="btn btn-primary" id="btnPublishBroadcast" type="button" style="font-size:0.75rem; flex:1;">Push Broadcast</button>
+        <button class="btn btn-outline" id="btnClearBroadcast" type="button" style="font-size:0.75rem; color:var(--red-500); border-color:var(--red-500);">Remove Banner</button>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+      <button class="btn btn-outline" style="color:var(--text-secondary);" id="btnCloseAdminModal" type="button">Close</button>
+      <button class="btn btn-primary" id="btnVerifyAdmin" type="button">Unlock Admin</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST BANNER -->
+<div id="toast">
+  <span id="toastMsg">Action completed successfully.</span>
+</div>
+
+<script>
+  let reports = JSON.parse(localStorage.getItem('mahs_safecampus_db') || '[]');
+  // Emergency broadcast is NULL/EMPTY by default. It ONLY appears when Admin types a message and pushes it!
+  let activeBroadcast = localStorage.getItem('mahs_emergency_broadcast') || '';
+  let selectedCategory = 'Electrical';
+  let activeFilter = 'All';
+  let searchQuery = '';
+  let isAdmin = sessionStorage.getItem('mahs_admin_active') === 'true';
+  let currentPhotoBase64 = null;
+  let dataSaverActive = false;
+
+  if (reports.length === 0) {
+    reports = [
+      {
+        id: 101,
+        reporter: 'Jay Martin Manaba (Grade 12)',
+        category: 'Electrical',
+        building: 'Bautista Building',
+        location: 'Room 302',
+        date: '2026-10-01',
+        severity: 'High',
+        description: 'Exposed wiring near wall outlet socket in 179 Denmark St. campus building.',
+        status: 'Open',
+        timestamp: 'Oct 1, 2026 • 08:30 AM',
+        photo: null,
+        adminNote: null
+      }
+    ];
+    saveState();
+  }
+
+  function saveState() {
+    localStorage.setItem('mahs_safecampus_db', JSON.stringify(reports));
+  }
+
+  // ADMIN EMERGENCY BROADCAST BANNER LOGIC
+  const emergencyBanner = document.getElementById('emergencyBroadcastBanner');
+  const broadcastText = document.getElementById('broadcastText');
+  const btnCloseBroadcast = document.getElementById('btnCloseBroadcast');
+  const adminBroadcastInput = document.getElementById('adminBroadcastInput');
+  const btnPublishBroadcast = document.getElementById('btnPublishBroadcast');
+  const btnClearBroadcast = document.getElementById('btnClearBroadcast');
+
+  function renderEmergencyBanner() {
+    if (activeBroadcast && activeBroadcast.trim() !== '') {
+      broadcastText.textContent = activeBroadcast;
+      emergencyBanner.style.display = 'flex';
+      if (adminBroadcastInput) adminBroadcastInput.value = activeBroadcast;
+    } else {
+      emergencyBanner.style.display = 'none';
+      if (adminBroadcastInput) adminBroadcastInput.value = '';
+    }
+  }
+  renderEmergencyBanner();
+
+  if (btnCloseBroadcast) {
+    btnCloseBroadcast.addEventListener('click', () => {
+      emergencyBanner.style.display = 'none';
+    });
+  }
+
+  if (btnPublishBroadcast) {
+    btnPublishBroadcast.addEventListener('click', () => {
+      const newMsg = adminBroadcastInput.value.trim();
+      if (newMsg) {
+        activeBroadcast = newMsg;
+        localStorage.setItem('mahs_emergency_broadcast', activeBroadcast);
+        renderEmergencyBanner();
+        showToast('🚨 Emergency alert banner activated campus-wide!');
+      } else {
+        alert('Please type what happened in the alert box before activating.');
+      }
+    });
+  }
+
+  if (btnClearBroadcast) {
+    btnClearBroadcast.addEventListener('click', () => {
+      activeBroadcast = '';
+      localStorage.removeItem('mahs_emergency_broadcast');
+      renderEmergencyBanner();
+      showToast('🧹 Emergency broadcast banner removed.');
+    });
+  }
+
+  // CSV DATA EXPORT LOGIC
+  const btnExportCSV = document.getElementById('btnExportCSV');
+  if (btnExportCSV) {
+    btnExportCSV.addEventListener('click', () => {
+      if (!reports || reports.length === 0) {
+        showToast('⚠️ No hazard report data available to export.');
+        return;
+      }
+
+      const headers = ['Report ID', 'Reporter', 'Category', 'Building', 'Location', 'Date Observed', 'Severity', 'Status', 'Timestamp', 'Description'];
+      const csvRows = [headers.join(',')];
+
+      reports.forEach(r => {
+        const row = [
+          r.id,
+          `"${(r.reporter || '').replace(/"/g, '""')}"`,
+          `"${(r.category || '').replace(/"/g, '""')}"`,
+          `"${(r.building || '').replace(/"/g, '""')}"`,
+          `"${(r.location || '').replace(/"/g, '""')}"`,
+          `"${(r.date || '').replace(/"/g, '""')}"`,
+          `"${(r.severity || '').replace(/"/g, '""')}"`,
+          `"${(r.status || '').replace(/"/g, '""')}"`,
+          `"${(r.timestamp || '').replace(/"/g, '""')}"`,
+          `"${(r.description || '').replace(/"/g, '""')}"`
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      const csvBlob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const downloadUrl = URL.createObjectURL(csvBlob);
+      const link = document.createElement('a');
+      link.setAttribute('href', downloadUrl);
+      link.setAttribute('download', `MAHS_SafeCampus_Hazard_Reports_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('📊 Hazard reports successfully exported to Excel CSV!');
+    });
+  }
+
+  // Network Status
+  function updateNetworkStatus() {
+    const netBadge = document.getElementById('netBadge');
+    if (navigator.onLine) {
+      netBadge.textContent = "🟢 Online Mode";
+      netBadge.className = "network-badge net-online";
+    } else {
+      netBadge.textContent = "🔴 Offline / No Signal";
+      netBadge.className = "network-badge net-offline";
+      showToast("📶 Offline Mode active. Reports saved to phone storage.");
+    }
+  }
+  window.addEventListener('online', updateNetworkStatus);
+  window.addEventListener('offline', updateNetworkStatus);
+  updateNetworkStatus();
+
+  // Admin Auth Handler
+  const btnAdminAuth = document.getElementById('btnAdminAuth');
+  const adminModal = document.getElementById('adminModal');
+  const btnCloseAdminModal = document.getElementById('btnCloseAdminModal');
+  const btnVerifyAdmin = document.getElementById('btnVerifyAdmin');
+  const adminPasscode = document.getElementById('adminPasscode');
+
+  function updateAdminBtnUI() {
+    if (isAdmin) {
+      btnAdminAuth.textContent = " Admin Mode: ON";
+      btnAdminAuth.style.background = "#10b981";
+      btnAdminAuth.style.color = "#ffffff";
+    } else {
+      btnAdminAuth.textContent = " Admin Mode: OFF";
+      btnAdminAuth.style.background = "#38bdf8";
+      btnAdminAuth.style.color = "#07172b";
+    }
+  }
+  updateAdminBtnUI();
+
+  btnAdminAuth.addEventListener('click', () => {
+    if (isAdmin) {
+      isAdmin = false;
+      sessionStorage.setItem('mahs_admin_active', 'false');
+      updateAdminBtnUI();
+      renderFeed();
+      showToast('🔒 Admin mode deactivated.');
+    } else {
+      adminModal.classList.add('active');
+    }
+  });
+
+  btnCloseAdminModal.addEventListener('click', () => {
+    adminModal.classList.remove('active');
+  });
+
+  btnVerifyAdmin.addEventListener('click', () => {
+    if (adminPasscode.value.trim() === 'ManabaCute') {
+      isAdmin = true;
+      sessionStorage.setItem('mahs_admin_active', 'true');
+      updateAdminBtnUI();
+      adminModal.classList.remove('active');
+      adminPasscode.value = '';
+      renderFeed();
+      showToast('🔓 Admin mode activated! Status controls & broadcast tool unlocked.');
+    } else {
+      alert('Incorrect passcode!');
+    }
+  });
+
+  // Low Data Saver Mode Toggle
+  const btnToggleDataSaver = document.getElementById('btnToggleDataSaver');
+  if (btnToggleDataSaver) {
+    btnToggleDataSaver.addEventListener('click', () => {
+      dataSaverActive = !dataSaverActive;
+      document.body.classList.toggle('data-saver-mode', dataSaverActive);
+      btnToggleDataSaver.textContent = dataSaverActive ? "⚡ Data Saver: ON" : "⚡ Data Saver: OFF";
+      showToast(dataSaverActive ? "⚡ Low-Data Mode ON (Images Hidden)" : "⚡ Normal Mode Restored");
+    });
+  }
+
+  // SMS Fallback
+  const btnSMSFallback = document.getElementById('btnSMSFallback');
+  if (btnSMSFallback) {
+    btnSMSFallback.addEventListener('click', () => {
+      const bld = document.getElementById('buildingZone').value || 'Main Campus';
+      const loc = document.getElementById('location').value || 'Upper Banlat';
+      const desc = document.getElementById('description').value || 'Safety Hazard';
+      
+      const smsBody = encodeURIComponent(`MAHS HAZARD REPORT:\nCat: ${selectedCategory}\nBldg: ${bld}\nLoc: ${loc}\nDesc: ${desc}`);
+      window.location.href = `sms:09171237233?body=${smsBody}`;
+    });
+  }
+
+  // Category Chips
+  document.querySelectorAll('#categoryChips .chip-item').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#categoryChips .chip-item').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedCategory = chip.dataset.cat;
+    });
+  });
+
+  // Filter Pills
+  document.querySelectorAll('#filterPills .filter-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('#filterPills .filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilter = pill.dataset.filter;
+      renderFeed();
+    });
+  });
+
+  // Search Input
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase();
+      renderFeed();
+    });
+  }
+
+  // Photo Upload
+  const uploadZone = document.getElementById('uploadZone');
+  const photoInput = document.getElementById('photoInput');
+  const photoPreviewContainer = document.getElementById('photoPreviewContainer');
+  const photoPreviewImg = document.getElementById('photoPreviewImg');
+
+  if (uploadZone && photoInput) {
+    uploadZone.addEventListener('click', (e) => {
+      if (e.target.id !== 'btnRemovePhoto') photoInput.click();
+    });
+
+    photoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          currentPhotoBase64 = evt.target.result;
+          if(photoPreviewImg) photoPreviewImg.src = currentPhotoBase64;
+          if(photoPreviewContainer) photoPreviewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Form Submit
+  const hazardForm = document.getElementById('hazardForm');
+  if (hazardForm) {
+    hazardForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const reporterInput = document.getElementById('reporterName');
+      const anonToggle = document.getElementById('anonToggle');
+      const buildingInput = document.getElementById('buildingZone');
+      const locationInput = document.getElementById('location');
+      const dateInput = document.getElementById('dateObserved');
+      const descInput = document.getElementById('description');
+      const sevRadio = document.querySelector('input[name="severity"]:checked');
+
+      const isAnon = anonToggle ? anonToggle.checked : false;
+      const now = new Date();
+
+      const newReport = {
+        id: Date.now(),
+        reporter: isAnon ? 'Anonymous' : reporterInput.value.trim(),
+        category: selectedCategory,
+        building: buildingInput.value.trim(),
+        location: locationInput.value.trim(),
+        date: dateInput.value,
+        severity: sevRadio ? sevRadio.value : 'Medium',
+        description: descInput.value.trim(),
+        status: 'Open',
+        timestamp: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' • ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+        photo: currentPhotoBase64,
+        adminNote: null
+      };
+
+      reports.unshift(newReport);
+      saveState();
+      renderFeed();
+
+      hazardForm.reset();
+      currentPhotoBase64 = null;
+      if(photoPreviewContainer) photoPreviewContainer.style.display = 'none';
+
+      showToast('🚀 Report saved locally & submitted!');
+    });
+  }
+
+  window.updateReportStatus = function(reportId, newStatus) {
+    const rIndex = reports.findIndex(r => r.id === reportId);
+    if (rIndex !== -1) {
+      reports[rIndex].status = newStatus;
+      saveState();
+      renderFeed();
+      if (newStatus === 'In Progress') {
+        showToast('⚡ Status set to IN PROGRESS — Live pulse animation active!');
+      } else {
+        showToast(`Status updated to ${newStatus}`);
+      }
+    }
+  };
+
+  // ADMIN DELETE REPORT FUNCTION
+  window.deleteReport = function(reportId) {
+    if (confirm('Are you sure you want to delete this filed hazard report?')) {
+      reports = reports.filter(r => r.id !== reportId);
+      saveState();
+      renderFeed();
+      showToast('🗑️ Report deleted successfully.');
+    }
+  };
+
+  function renderFeed() {
+    const mTotal = document.getElementById('mTotal');
+    const mOpen = document.getElementById('mOpen');
+    const mProgress = document.getElementById('mProgress');
+    const mResolved = document.getElementById('mResolved');
+    const mProgressCard = document.getElementById('mProgressCard');
+    const mProgressIndicator = document.getElementById('mProgressIndicator');
+
+    const inProgressCount = reports.filter(r => r.status === 'In Progress').length;
+
+    if (mTotal) mTotal.textContent = reports.length;
+    if (mOpen) mOpen.textContent = reports.filter(r => r.status === 'Open').length;
+    if (mProgress) mProgress.textContent = inProgressCount;
+    if (mResolved) mResolved.textContent = reports.filter(r => r.status === 'Resolved').length;
+
+    if (mProgressCard && mProgressIndicator) {
+      if (inProgressCount > 0) {
+        mProgressCard.classList.add('metric-progress-active');
+        mProgressIndicator.style.display = 'inline-block';
+      } else {
+        mProgressCard.classList.remove('metric-progress-active');
+        mProgressIndicator.style.display = 'none';
+      }
+    }
+
+    renderCategoryChartBars();
+
+    const container = document.getElementById('reportsList');
+    if (!container) return;
+
+    let filtered = reports.filter(r => {
+      const matchFilter = (activeFilter === 'All') || (r.status === activeFilter);
+      const matchQuery = !searchQuery || 
+        r.category.toLowerCase().includes(searchQuery) ||
+        r.location.toLowerCase().includes(searchQuery) ||
+        r.building.toLowerCase().includes(searchQuery) ||
+        r.description.toLowerCase().includes(searchQuery);
+      return matchFilter && matchQuery;
+    });
+
+    if (filtered.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:0.9rem;">No hazard reports found matching criteria.</div>`;
+      return;
+    }
+
+    container.innerHTML = filtered.map(r => {
+      const isInProgress = r.status === 'In Progress';
+      
+      let statusBadgeHtml = '';
+      if (isInProgress) {
+        statusBadgeHtml = `
+          <span class="bg-in-progress-animated">
+            <span class="pulse-indicator"></span> IN PROGRESS
+          </span>
+        `;
+      } else {
+        const badgeClass = r.status === 'Open' ? 'bg-open' : 'bg-resolved';
+        statusBadgeHtml = `<span class="badge-tag ${badgeClass}">${r.status}</span>`;
+      }
+
+      return `
+        <div class="report-card sev-${r.severity} ${isInProgress ? 'status-in-progress' : ''}">
+          <div class="report-top">
+            <div class="report-title">
+              <span>${r.category}</span> — <span>${r.location} (${r.building})</span>
+            </div>
+            <div class="report-badges">
+              <span class="badge-tag bg-${r.severity.toLowerCase()}">${r.severity}</span>
+              ${statusBadgeHtml}
+            </div>
+          </div>
+          <div class="report-body">${r.description}</div>
+          ${r.photo ? `<img src="${r.photo}" class="report-photo-thumb" alt="Hazard evidence" />` : ''}
+          <div class="report-meta">
+            <span>👤 ${r.reporter}</span>
+            <span>🕒 ${r.timestamp}</span>
+          </div>
+
+          ${isAdmin ? `
+            <div class="admin-actions">
+              <label>⚙️ Admin Actions:</label>
+              <select class="admin-status-select" onchange="updateReportStatus(${r.id}, this.value)">
+                <option value="Open" ${r.status === 'Open' ? 'selected' : ''}>Open</option>
+                <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                <option value="Resolved" ${r.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+              </select>
+              <button type="button" class="btn-delete-report" onclick="deleteReport(${r.id})">🗑️ Delete</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderCategoryChartBars() {
+    const chartContainer = document.getElementById('categoryChartBars');
+    if (!chartContainer) return;
+
+    const categories = ['Electrical', 'Structural', 'Slip/Fall', 'Fire Safety', 'Sanitation', 'Security'];
+    const counts = {};
+    categories.forEach(c => counts[c] = 0);
+
+    reports.forEach(r => {
+      if (counts[r.category] !== undefined) {
+        counts[r.category]++;
+      } else {
+        counts[r.category] = (counts[r.category] || 0) + 1;
+      }
+    });
+
+    const maxCount = Math.max(...Object.values(counts), 1);
+
+    chartContainer.innerHTML = categories.map(cat => {
+      const count = counts[cat] || 0;
+      const percentage = Math.round((count / maxCount) * 100);
+      return `
+        <div class="chart-row">
+          <div class="chart-label">${cat}</div>
+          <div class="chart-track">
+            <div class="chart-fill" style="width: ${percentage}%;"></div>
+          </div>
+          <div class="chart-val">${count}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    if (!toast || !toastMsg) return;
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  renderFeed();
+</script>
+</body>
+</html>
