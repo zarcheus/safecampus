@@ -61,7 +61,7 @@
     display: none !important;
   }
 
-  /* EMERGENCY BROADCAST BANNER (HIDDEN BY DEFAULT, SHOWN WHEN ADMIN ACTIVATES IT) */
+  /* EMERGENCY BROADCAST BANNER */
   .emergency-broadcast-banner {
     background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
     color: #ffffff; padding: 12px 24px; display: none; justify-content: space-between;
@@ -207,7 +207,7 @@
   .upload-area p { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
   #photoPreviewContainer { margin-top: 10px; display: none; position: relative; width: 100%; height: 120px; border-radius: 8px; overflow: hidden; }
   #photoPreviewContainer img { width: 100%; height: 100%; object-fit: cover; }
-  .remove-photo-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
+  .remove-photo-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; z-index: 10; }
 
   .checkbox-anon { display: flex; align-items: center; gap: 8px; font-size: 0.83rem; color: var(--text-secondary); cursor: pointer; }
 
@@ -291,7 +291,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 3px 9px;
+    padding: 3px 99px;
     border-radius: 6px;
     font-size: 0.68rem;
     font-weight: 800;
@@ -380,7 +380,7 @@
 </head>
 <body>
 
-<!-- EMERGENCY BROADCAST BANNER (HIDDEN UNTIL ADMIN ACTIVATES & TYPES AN INCIDENT) -->
+<!-- EMERGENCY BROADCAST BANNER -->
 <div class="emergency-broadcast-banner" id="emergencyBroadcastBanner">
   <div class="broadcast-content">
     <span class="broadcast-tag">🚨 Campus Emergency Alert</span>
@@ -613,7 +613,7 @@
   </div>
 </main>
 
-<!-- ADMIN AUTH MODAL (WITH BROADCAST BANNER CONTROL) -->
+<!-- ADMIN AUTH MODAL -->
 <div class="modal-overlay" id="adminModal">
   <div class="modal-box">
     <h4>🔒 Administrative Access</h4>
@@ -646,9 +646,56 @@
   <span id="toastMsg">Action completed successfully.</span>
 </div>
 
+<!-- Firebase CDN -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    updateDoc,
+    deleteDoc,
+    doc,
+    query,
+    orderBy,
+    serverTimestamp,
+    setDoc
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDP8CtMJHjrqbIUEfgEiMrQ5L2ak-H6b4M",
+    authDomain: "safecampus-web.firebaseapp.com",
+    projectId: "safecampus-web",
+    storageBucket: "safecampus-web.firebasestorage.app",
+    messagingSenderId: "457922141221",
+    appId: "1:457922141221:web:45367bffa0b82299c833cc",
+    measurementId: "G-SW4N8D4WSJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.firebaseApp = app;
+  window.firebaseDB = db;
+
+  window.firebaseTools = {
+    collection,
+    addDoc,
+    onSnapshot,
+    updateDoc,
+    deleteDoc,
+    doc,
+    query,
+    orderBy,
+    serverTimestamp,
+    setDoc
+  };
+</script>
+
 <script>
-  let reports = JSON.parse(localStorage.getItem('mahs_safecampus_db') || '[]');
-  // Emergency broadcast is NULL/EMPTY by default. It ONLY appears when Admin types a message and pushes it!
+  let reports = [];
   let activeBroadcast = localStorage.getItem('mahs_emergency_broadcast') || '';
   let selectedCategory = 'Electrical';
   let activeFilter = 'All';
@@ -656,26 +703,6 @@
   let isAdmin = sessionStorage.getItem('mahs_admin_active') === 'true';
   let currentPhotoBase64 = null;
   let dataSaverActive = false;
-
-  if (reports.length === 0) {
-    reports = [
-      {
-        id: 101,
-        reporter: 'Jay Martin Manaba (Grade 12)',
-        category: 'Electrical',
-        building: 'Bautista Building',
-        location: 'Room 302',
-        date: '2026-10-01',
-        severity: 'High',
-        description: 'Exposed wiring near wall outlet socket in 179 Denmark St. campus building.',
-        status: 'Open',
-        timestamp: 'Oct 1, 2026 • 08:30 AM',
-        photo: null,
-        adminNote: null
-      }
-    ];
-    saveState();
-  }
 
   function saveState() {
     localStorage.setItem('mahs_safecampus_db', JSON.stringify(reports));
@@ -779,7 +806,7 @@
     } else {
       netBadge.textContent = "🔴 Offline / No Signal";
       netBadge.className = "network-badge net-offline";
-      showToast("📶 Offline Mode active. Reports saved to phone storage.");
+      showToast("📶 Offline. Reports saved to phone storage.");
     }
   }
   window.addEventListener('online', updateNetworkStatus);
@@ -888,11 +915,12 @@
     });
   }
 
-  // Photo Upload
+  // Photo Upload & Removal
   const uploadZone = document.getElementById('uploadZone');
   const photoInput = document.getElementById('photoInput');
   const photoPreviewContainer = document.getElementById('photoPreviewContainer');
   const photoPreviewImg = document.getElementById('photoPreviewImg');
+  const btnRemovePhoto = document.getElementById('btnRemovePhoto');
 
   if (uploadZone && photoInput) {
     uploadZone.addEventListener('click', (e) => {
@@ -913,10 +941,20 @@
     });
   }
 
-  // Form Submit
+  if (btnRemovePhoto) {
+    btnRemovePhoto.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentPhotoBase64 = null;
+      if (photoInput) photoInput.value = '';
+      if (photoPreviewContainer) photoPreviewContainer.style.display = 'none';
+      if (photoPreviewImg) photoPreviewImg.src = '';
+    });
+  }
+
+  // Form Submit (Updated with Firestore async addDoc)
   const hazardForm = document.getElementById('hazardForm');
   if (hazardForm) {
-    hazardForm.addEventListener('submit', (e) => {
+    hazardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const reporterInput = document.getElementById('reporterName');
@@ -931,7 +969,6 @@
       const now = new Date();
 
       const newReport = {
-        id: Date.now(),
         reporter: isAnon ? 'Anonymous' : reporterInput.value.trim(),
         category: selectedCategory,
         building: buildingInput.value.trim(),
@@ -940,34 +977,65 @@
         severity: sevRadio ? sevRadio.value : 'Medium',
         description: descInput.value.trim(),
         status: 'Open',
-        timestamp: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' • ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+        timestamp:
+          now.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric'
+          }) +
+          ' • ' +
+          now.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit'
+          }),
         photo: currentPhotoBase64,
-        adminNote: null
+        adminNote: null,
+        createdAt: window.firebaseTools.serverTimestamp()
       };
 
-      reports.unshift(newReport);
-      saveState();
-      renderFeed();
+      try {
+        const { collection, addDoc } = window.firebaseTools;
+        const reportsRef = collection(window.firebaseDB, 'hazardReports');
 
-      hazardForm.reset();
-      currentPhotoBase64 = null;
-      if(photoPreviewContainer) photoPreviewContainer.style.display = 'none';
+        await addDoc(reportsRef, newReport);
 
-      showToast('🚀 Report saved locally & submitted!');
+        hazardForm.reset();
+        currentPhotoBase64 = null;
+
+        if (photoPreviewContainer) {
+          photoPreviewContainer.style.display = 'none';
+        }
+        if (photoPreviewImg) {
+          photoPreviewImg.src = '';
+        }
+
+        showToast('🚀 Report submitted to Firebase!');
+      } catch (error) {
+        console.error('Firestore submit error:', error);
+        showToast('Could not submit report.');
+      }
     });
   }
 
-  window.updateReportStatus = function(reportId, newStatus) {
-    const rIndex = reports.findIndex(r => r.id === reportId);
-    if (rIndex !== -1) {
-      reports[rIndex].status = newStatus;
-      saveState();
-      renderFeed();
+  window.updateReportStatus = async function(reportId, newStatus) {
+    try {
+      const { doc, updateDoc } = window.firebaseTools;
+
+      await updateDoc(
+        doc(window.firebaseDB, "hazardReports", reportId),
+        {
+          status: newStatus
+        }
+      );
+
       if (newStatus === 'In Progress') {
         showToast('⚡ Status set to IN PROGRESS — Live pulse animation active!');
       } else {
         showToast(`Status updated to ${newStatus}`);
       }
+
+    } catch (error) {
+      console.error('Firestore status update error:', error);
+      showToast('Could not update report status.');
     }
   };
 
@@ -1062,12 +1130,12 @@
           ${isAdmin ? `
             <div class="admin-actions">
               <label>⚙️ Admin Actions:</label>
-              <select class="admin-status-select" onchange="updateReportStatus(${r.id}, this.value)">
+              <select class="admin-status-select" onchange="updateReportStatus('${r.id}', this.value)">
                 <option value="Open" ${r.status === 'Open' ? 'selected' : ''}>Open</option>
                 <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
                 <option value="Resolved" ${r.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
               </select>
-              <button type="button" class="btn-delete-report" onclick="deleteReport(${r.id})">🗑️ Delete</button>
+              <button type="button" class="btn-delete-report" onclick="deleteReport('${r.id}')">🗑️ Delete</button>
             </div>
           ` : ''}
         </div>
@@ -1116,6 +1184,37 @@
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3500);
   }
+
+  // FIRESTORE REAL-TIME REPORT LISTENER
+  const {
+    collection,
+    onSnapshot,
+    query,
+    orderBy
+  } = window.firebaseTools;
+
+  const reportsRef = collection(window.firebaseDB, 'hazardReports');
+
+  const reportsQuery = query(
+    reportsRef,
+    orderBy('createdAt', 'desc')
+  );
+
+  onSnapshot(
+    reportsQuery,
+    (snapshot) => {
+      reports = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      renderFeed();
+    },
+    (error) => {
+      console.error('Firestore listener error:', error);
+      showToast('Could not load cloud reports.');
+    }
+  );
 
   renderFeed();
 </script>
