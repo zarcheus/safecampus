@@ -291,7 +291,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 3px 99px;
+    padding: 3px 8px;
     border-radius: 6px;
     font-size: 0.68rem;
     font-weight: 800;
@@ -951,7 +951,7 @@
     });
   }
 
-  // Form Submit (Updated with Firestore async addDoc)
+  // Form Submit Handler
   const hazardForm = document.getElementById('hazardForm');
   if (hazardForm) {
     hazardForm.addEventListener('submit', async (e) => {
@@ -973,7 +973,7 @@
         category: selectedCategory,
         building: buildingInput.value.trim(),
         location: locationInput.value.trim(),
-        date: dateInput.value,
+        date: dateInput.value || now.toISOString().split('T')[0],
         severity: sevRadio ? sevRadio.value : 'Medium',
         description: descInput.value.trim(),
         status: 'Open',
@@ -1008,23 +1008,22 @@
           photoPreviewImg.src = '';
         }
 
-        showToast('🚀 Report submitted to Firebase!');
+        showToast('🚀 Report submitted successfully!');
       } catch (error) {
         console.error('Firestore submit error:', error);
-        showToast('Could not submit report.');
+        showToast('⚠️ Could not submit report. Check database security rules.');
       }
     });
   }
 
+  // UPDATE REPORT STATUS (FIRESTORE SYNC)
   window.updateReportStatus = async function(reportId, newStatus) {
     try {
       const { doc, updateDoc } = window.firebaseTools;
 
       await updateDoc(
         doc(window.firebaseDB, "hazardReports", reportId),
-        {
-          status: newStatus
-        }
+        { status: newStatus }
       );
 
       if (newStatus === 'In Progress') {
@@ -1039,13 +1038,17 @@
     }
   };
 
-  // ADMIN DELETE REPORT FUNCTION
-  window.deleteReport = function(reportId) {
+  // ADMIN DELETE REPORT FUNCTION (FIRESTORE SYNC)
+  window.deleteReport = async function(reportId) {
     if (confirm('Are you sure you want to delete this filed hazard report?')) {
-      reports = reports.filter(r => r.id !== reportId);
-      saveState();
-      renderFeed();
-      showToast('🗑️ Report deleted successfully.');
+      try {
+        const { doc, deleteDoc } = window.firebaseTools;
+        await deleteDoc(doc(window.firebaseDB, "hazardReports", reportId));
+        showToast('🗑️ Report deleted successfully.');
+      } catch (error) {
+        console.error('Firestore delete error:', error);
+        showToast('Could not delete report from cloud.');
+      }
     }
   };
 
@@ -1082,10 +1085,10 @@
     let filtered = reports.filter(r => {
       const matchFilter = (activeFilter === 'All') || (r.status === activeFilter);
       const matchQuery = !searchQuery || 
-        r.category.toLowerCase().includes(searchQuery) ||
-        r.location.toLowerCase().includes(searchQuery) ||
-        r.building.toLowerCase().includes(searchQuery) ||
-        r.description.toLowerCase().includes(searchQuery);
+        (r.category || '').toLowerCase().includes(searchQuery) ||
+        (r.location || '').toLowerCase().includes(searchQuery) ||
+        (r.building || '').toLowerCase().includes(searchQuery) ||
+        (r.description || '').toLowerCase().includes(searchQuery);
       return matchFilter && matchQuery;
     });
 
@@ -1106,25 +1109,25 @@
         `;
       } else {
         const badgeClass = r.status === 'Open' ? 'bg-open' : 'bg-resolved';
-        statusBadgeHtml = `<span class="badge-tag ${badgeClass}">${r.status}</span>`;
+        statusBadgeHtml = `<span class="badge-tag ${badgeClass}">${r.status || 'Open'}</span>`;
       }
 
       return `
-        <div class="report-card sev-${r.severity} ${isInProgress ? 'status-in-progress' : ''}">
+        <div class="report-card sev-${r.severity || 'Medium'} ${isInProgress ? 'status-in-progress' : ''}">
           <div class="report-top">
             <div class="report-title">
-              <span>${r.category}</span> — <span>${r.location} (${r.building})</span>
+              <span>${r.category || 'General'}</span> — <span>${r.location || 'N/A'} (${r.building || 'N/A'})</span>
             </div>
             <div class="report-badges">
-              <span class="badge-tag bg-${r.severity.toLowerCase()}">${r.severity}</span>
+              <span class="badge-tag bg-${(r.severity || 'med').toLowerCase()}">${r.severity || 'Medium'}</span>
               ${statusBadgeHtml}
             </div>
           </div>
-          <div class="report-body">${r.description}</div>
+          <div class="report-body">${r.description || ''}</div>
           ${r.photo ? `<img src="${r.photo}" class="report-photo-thumb" alt="Hazard evidence" />` : ''}
           <div class="report-meta">
-            <span>👤 ${r.reporter}</span>
-            <span>🕒 ${r.timestamp}</span>
+            <span>👤 ${r.reporter || 'Anonymous'}</span>
+            <span>🕒 ${r.timestamp || 'Just now'}</span>
           </div>
 
           ${isAdmin ? `
@@ -1185,38 +1188,49 @@
     setTimeout(() => toast.classList.remove('show'), 3500);
   }
 
-  // FIRESTORE REAL-TIME REPORT LISTENER
-  const {
-    collection,
-    onSnapshot,
-    query,
-    orderBy
-  } = window.firebaseTools;
+  // FIRESTORE REAL-TIME SNAPSHOT LISTENER
+  function initFirestoreListener() {
+    const { collection, onSnapshot } = window.firebaseTools;
+    const reportsRef = collection(window.firebaseDB, 'hazardReports');
 
-  const reportsRef = collection(window.firebaseDB, 'hazardReports');
+    onSnapshot(
+      reportsRef,
+      (snapshot) => {
+        reports = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
 
-  const reportsQuery = query(
-    reportsRef,
-    orderBy('createdAt', 'desc')
-  );
+        // Sort by timestamp/creation client-side safely
+        reports.sort((a, b) => {
+          const tA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : Date.now();
+          const tB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : Date.now();
+          return tB - tA;
+        });
 
-  onSnapshot(
-    reportsQuery,
-    (snapshot) => {
-      reports = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+        saveState();
+        renderFeed();
+      },
+      (error) => {
+        console.error('Firestore listener error:', error);
+        showToast('⚠️ Sync issue with cloud. Using local cache.');
+        const localData = localStorage.getItem('mahs_safecampus_db');
+        if (localData) {
+          reports = JSON.parse(localData);
+          renderFeed();
+        }
+      }
+    );
+  }
 
+  // Wait briefly for firebaseTools module setup then listen
+  setTimeout(() => {
+    if (window.firebaseTools) {
+      initFirestoreListener();
+    } else {
       renderFeed();
-    },
-    (error) => {
-      console.error('Firestore listener error:', error);
-      showToast('Could not load cloud reports.');
     }
-  );
-
-  renderFeed();
+  }, 300);
 </script>
 </body>
 </html>
