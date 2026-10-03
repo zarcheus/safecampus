@@ -834,28 +834,6 @@
     });
   }
 
-  // FIX 2: OFFLINE SYNC ON RECONNECTION
-  async function syncOfflineReports() {
-    if (!navigator.onLine) return;
-    const offlineReports = reports.filter(r => r.id && String(r.id).startsWith('loc_'));
-    if (offlineReports.length === 0) return;
-
-    for (const report of offlineReports) {
-      try {
-        const reportsRef = collection(db, 'hazardReports');
-        await addDoc(reportsRef, {
-          ...report,
-          createdAt: serverTimestamp()
-        });
-        reports = reports.filter(r => r.id !== report.id);
-      } catch (e) {
-        console.error('Failed to sync offline report:', e);
-      }
-    }
-    saveState();
-    showToast('🔄 Offline reports synchronized with server!');
-  }
-
   // NETWORK STATUS TRACKER
   function updateNetworkStatus() {
     const netBadge = document.getElementById('netBadge');
@@ -873,7 +851,6 @@
   window.addEventListener('offline', updateNetworkStatus);
   updateNetworkStatus();
 
-  // FIX 1: SECURE FIREBASE AUTHENTICATION
   const btnAdminAuth = document.getElementById('btnAdminAuth');
   const adminModal = document.getElementById('adminModal');
   const btnCloseAdminModal = document.getElementById('btnCloseAdminModal');
@@ -1050,7 +1027,6 @@
     });
   }
 
-  // FIX 9: MISSING SDK CHECK FOR EMAILJS
   function sendEmailConfirmation(reportData) {
     if (typeof emailjs === 'undefined') {
       console.warn("EmailJS SDK not loaded or blocked.");
@@ -1103,11 +1079,11 @@
       }
 
       const now = new Date();
-      const currentTimestamp = Date.now(); // FIX 6: FIXED ANCHOR TIMESTAMP
+      const currentTimestamp = Date.now(); 
 
       const newReport = {
         id: 'loc_' + currentTimestamp,
-        createdAt: currentTimestamp, // FIX 6: STABLE SORT ANCHOR
+        createdAt: currentTimestamp, 
         reporter: isAnon ? 'Anonymous' : reporterInput.value.trim(),
         email: isAnon ? '' : (emailInput ? emailInput.value.trim() : ''),
         category: selectedCategory,
@@ -1152,7 +1128,6 @@
 
       hazardForm.reset();
       
-      // FIX 7: CATEGORY CHIP DESYNCHRONIZATION RESET
       selectedCategory = 'Electrical';
       document.querySelectorAll('#categoryChips .chip-item').forEach((c, idx) => {
         c.classList.toggle('active', idx === 0);
@@ -1290,10 +1265,8 @@
       const safeTimestamp = escapeHtml(r.timestamp || 'Just now');
       const safeSeverity = escapeHtml(r.severity || 'Medium');
 
-      // FIX 5: SEVERITY BADGE CLASS MAPPING MATCH (.bg-med)
       const sevKey = safeSeverity === 'Medium' ? 'med' : safeSeverity.toLowerCase();
 
-      // FIX 3: XSS SANITIZATION ON PHOTO FIELD
       const safePhoto = (r.photo && typeof r.photo === 'string' && (r.photo.startsWith('data:image/') || r.photo.startsWith('https://')))
         ? r.photo
         : null;
@@ -1374,7 +1347,6 @@
     setTimeout(() => toast.classList.remove('show'), 3500);
   }
 
-  // FIX 8: BOUNDED FIRESTORE QUERY
   function initFirestoreListener() {
     if (!db) return;
     
@@ -1396,7 +1368,6 @@
         const unsyncedLocal = reports.filter(r => r.id && String(r.id).startsWith('loc_'));
         reports = [...unsyncedLocal, ...firestoreReports];
 
-        // FIX 6: DETERMINISTIC STABLE SORT
         reports.sort((a, b) => {
           const tA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (typeof a.createdAt === 'number' ? a.createdAt : 0);
           const tB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (typeof b.createdAt === 'number' ? b.createdAt : 0);
