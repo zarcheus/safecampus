@@ -634,20 +634,25 @@
 <!-- ADMIN AUTH MODAL -->
 <div class="modal-overlay" id="adminModal">
   <div class="modal-box">
-    <h4>🔒 Administrative Access</h4>
-    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">Authenticate with admin credentials to update report status or send emergency broadcasts.</p>
-    <div class="form-group">
-      <label>Admin Email</label>
-      <input type="email" id="adminEmail" placeholder="admin@mahs.edu.ph" />
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="adminPasscode" placeholder="Enter admin password" />
+    <h4 id="adminModalTitle">🔒 Administrative Access</h4>
+    <p id="adminModalDesc" style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">Authenticate with admin credentials to update report status or send emergency broadcasts.</p>
+
+    <!-- Shown only while signed OUT -->
+    <div id="adminLoginFields">
+      <div class="form-group">
+        <label>Admin Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@mahs.edu.ph" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="adminPasscode" placeholder="Enter admin password" />
+      </div>
     </div>
 
-    <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--border);">
+    <!-- Shown only while signed IN as admin -->
+    <div id="adminBroadcastSection" style="display:none; margin-top: 8px; padding-top: 14px; border-top: 1px dashed var(--border);">
       <label style="color:var(--red-500); font-size:0.75rem; font-weight:800;">🚨 Activate Campus Emergency Broadcast</label>
-      <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:6px;">Type an incident message below and tap "Push Broadcast" to show the alert banner campus-wide.</p>
+      <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:6px;">Type an incident message below and tap "Push Broadcast" to show the alert banner.</p>
       <input type="text" id="adminBroadcastInput" placeholder="e.g. Caution: Wet floors near Science Lab 2. Exercise care." style="margin-top: 4px;" />
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button class="btn btn-primary" id="btnPublishBroadcast" type="button" style="font-size:0.75rem; flex:1;">Push Broadcast</button>
@@ -657,6 +662,7 @@
 
     <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
       <button class="btn btn-outline" style="color:var(--text-secondary);" id="btnCloseAdminModal" type="button">Close</button>
+      <button class="btn btn-outline" style="display:none; color:var(--red-500); border-color:var(--red-500);" id="btnAdminLogout" type="button">Log out</button>
       <button class="btn btn-primary" id="btnVerifyAdmin" type="button">Unlock Admin</button>
     </div>
   </div>
@@ -790,7 +796,8 @@
         activeBroadcast = newMsg;
         localStorage.setItem('mahs_emergency_broadcast', activeBroadcast);
         renderEmergencyBanner();
-        showToast('🚨 Emergency alert banner activated campus-wide!');
+        document.getElementById('adminModal').classList.remove('active');
+        showToast('🚨 Emergency alert banner activated!');
       } else {
         alert('Please type what happened in the alert box before activating.');
       }
@@ -806,6 +813,7 @@
       activeBroadcast = '';
       localStorage.removeItem('mahs_emergency_broadcast');
       renderEmergencyBanner();
+      document.getElementById('adminModal').classList.remove('active');
       showToast('🧹 Emergency broadcast banner removed.');
     });
   }
@@ -909,7 +917,25 @@
   const adminEmail = document.getElementById('adminEmail');
   const adminPasscode = document.getElementById('adminPasscode');
 
+  function syncAdminModal() {
+    const show = (id, on, disp) => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = on ? (disp || 'block') : 'none';
+    };
+    show('adminLoginFields', !isAdmin);
+    show('btnVerifyAdmin', !isAdmin, 'inline-flex');
+    show('adminBroadcastSection', isAdmin);
+    show('btnAdminLogout', isAdmin, 'inline-flex');
+    const title = document.getElementById('adminModalTitle');
+    const desc = document.getElementById('adminModalDesc');
+    if (title) title.textContent = isAdmin ? '🛡️ Admin Panel' : '🔒 Administrative Access';
+    if (desc) desc.textContent = isAdmin
+      ? 'You are signed in. Send or remove the emergency broadcast banner below.'
+      : 'Authenticate with admin credentials to update report status or send emergency broadcasts.';
+  }
+
   function updateAdminBtnUI() {
+    syncAdminModal();
     if (isAdmin) {
       btnAdminAuth.textContent = " Admin Mode: ON";
       btnAdminAuth.style.background = "#10b981";
@@ -932,18 +958,24 @@
     renderFeed();
   });
 
+  // Tapping the button always opens the modal (login form when signed out, admin panel when signed in)
   btnAdminAuth.addEventListener('click', () => {
-    if (isAdmin) {
+    syncAdminModal();
+    adminModal.classList.add('active');
+  });
+
+  const btnAdminLogout = document.getElementById('btnAdminLogout');
+  if (btnAdminLogout) {
+    btnAdminLogout.addEventListener('click', () => {
       signOut(auth).then(() => {
         isAdmin = false;
         updateAdminBtnUI();
         renderFeed();
+        adminModal.classList.remove('active');
         showToast('🔒 Admin logged out.');
       });
-    } else {
-      adminModal.classList.add('active');
-    }
-  });
+    });
+  }
 
   btnCloseAdminModal.addEventListener('click', () => {
     adminModal.classList.remove('active');
@@ -960,7 +992,6 @@
 
     try {
       await signInWithEmailAndPassword(auth, emailVal, passVal);
-      adminModal.classList.remove('active');
       adminEmail.value = '';
       adminPasscode.value = '';
     } catch (err) {
