@@ -717,7 +717,24 @@
       .replace(/'/g, '&#039;');
   }
 
-  let reports = JSON.parse(localStorage.getItem('mahs_safecampus_db')) || [];
+  // Drop duplicate/polluted entries left in the cache by the old sync bug.
+  // Real offline reports always have a numeric createdAt; copies of server reports don't.
+  function cleanLocalCache(list) {
+    const seen = new Set();
+    return (Array.isArray(list) ? list : []).filter(r => {
+      if (!r || !r.id) return false;
+      if (String(r.id).startsWith('loc_') && typeof r.createdAt !== 'number') return false;
+      if (seen.has(r.id)) return false;
+      seen.add(r.id);
+      return true;
+    });
+  }
+  let reports = [];
+  try {
+    reports = cleanLocalCache(JSON.parse(localStorage.getItem('mahs_safecampus_db')));
+  } catch (e) {
+    reports = [];
+  }
   let activeBroadcast = localStorage.getItem('mahs_emergency_broadcast') || '';
   let selectedCategory = 'Electrical';
   let activeFilter = 'All';
@@ -834,6 +851,39 @@
     });
   }
 
+  // FIX 2: OFFLINE SYNC ON RECONNECTION
+  let isSyncing = false;
+  async function syncOfflineReports() {
+    if (!navigator.onLine || isSyncing) return;
+    const offlineReports = reports.filter(r =>
+      r.id && String(r.id).startsWith('loc_') && typeof r.createdAt === 'number'
+    );
+    if (offlineReports.length === 0) return;
+
+    isSyncing = true;
+    let syncedCount = 0;
+    try {
+      for (const report of offlineReports) {
+        try {
+          const { id: localId, ...data } = report; // never store the local id as the doc's "id"
+          await addDoc(collection(db, 'hazardReports'), {
+            ...data,
+            clientId: localId,
+            createdAt: serverTimestamp()
+          });
+          reports = reports.filter(r => r.id !== localId);
+          saveState();
+          syncedCount++;
+        } catch (e) {
+          console.error('Failed to sync offline report:', e);
+        }
+      }
+    } finally {
+      isSyncing = false;
+    }
+    if (syncedCount > 0) showToast('🔄 Offline reports synchronized with server!');
+  }
+
   // NETWORK STATUS TRACKER
   function updateNetworkStatus() {
     const netBadge = document.getElementById('netBadge');
@@ -851,6 +901,7 @@
   window.addEventListener('offline', updateNetworkStatus);
   updateNetworkStatus();
 
+  // FIX 1: SECURE FIREBASE AUTHENTICATION
   const btnAdminAuth = document.getElementById('btnAdminAuth');
   const adminModal = document.getElementById('adminModal');
   const btnCloseAdminModal = document.getElementById('btnCloseAdminModal');
@@ -1027,6 +1078,7 @@
     });
   }
 
+  // FIX 9: MISSING SDK CHECK FOR EMAILJS
   function sendEmailConfirmation(reportData) {
     if (typeof emailjs === 'undefined') {
       console.warn("EmailJS SDK not loaded or blocked.");
@@ -1079,11 +1131,11 @@
       }
 
       const now = new Date();
-      const currentTimestamp = Date.now(); 
+      const currentTimestamp = Date.now(); // FIX 6: FIXED ANCHOR TIMESTAMP
 
       const newReport = {
         id: 'loc_' + currentTimestamp,
-        createdAt: currentTimestamp, 
+        createdAt: currentTimestamp, // FIX 6: STABLE SORT ANCHOR
         reporter: isAnon ? 'Anonymous' : reporterInput.value.trim(),
         email: isAnon ? '' : (emailInput ? emailInput.value.trim() : ''),
         category: selectedCategory,
@@ -1105,8 +1157,10 @@
       if (db && navigator.onLine) {
         try {
           const reportsRef = collection(db, 'hazardReports');
+          const { id: localId, ...reportData } = newReport;
           const docRef = await addDoc(reportsRef, {
-            ...newReport,
+            ...reportData,
+            clientId: localId,
             createdAt: serverTimestamp()
           });
           newReport.id = docRef.id;
@@ -1128,6 +1182,7 @@
 
       hazardForm.reset();
       
+      // FIX 7: CATEGORY CHIP DESYNCHRONIZATION RESET
       selectedCategory = 'Electrical';
       document.querySelectorAll('#categoryChips .chip-item').forEach((c, idx) => {
         c.classList.toggle('active', idx === 0);
@@ -1265,8 +1320,10 @@
       const safeTimestamp = escapeHtml(r.timestamp || 'Just now');
       const safeSeverity = escapeHtml(r.severity || 'Medium');
 
+      // FIX 5: SEVERITY BADGE CLASS MAPPING MATCH (.bg-med)
       const sevKey = safeSeverity === 'Medium' ? 'med' : safeSeverity.toLowerCase();
 
+      // FIX 3: XSS SANITIZATION ON PHOTO FIELD
       const safePhoto = (r.photo && typeof r.photo === 'string' && (r.photo.startsWith('data:image/') || r.photo.startsWith('https://')))
         ? r.photo
         : null;
@@ -1347,6 +1404,7 @@
     setTimeout(() => toast.classList.remove('show'), 3500);
   }
 
+  // FIX 8: BOUNDED FIRESTORE QUERY
   function initFirestoreListener() {
     if (!db) return;
     
@@ -1359,15 +1417,29 @@
     onSnapshot(
       reportsQuery,
       (snapshot) => {
-        const firestoreReports = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        // Doc id goes LAST so a stray "id" field inside the data can't override it.
+        // Also skip repeated copies of one submission created by the old bug.
+        const seenSubmissions = new Set();
+        const firestoreReports = [];
+        snapshot.docs.forEach(d => {
+          const data = d.data();
+          const key = data.clientId || data.id;
+          if (key) {
+            if (seenSubmissions.has(key)) return;
+            seenSubmissions.add(key);
+          }
+          firestoreReports.push({ ...data, id: d.id });
+        });
 
-        // Preserve unsynced offline reports
-        const unsyncedLocal = reports.filter(r => r.id && String(r.id).startsWith('loc_'));
+        // Preserve only truly unsynced offline reports (not already on the server)
+        const unsyncedLocal = reports.filter(r =>
+          r.id && String(r.id).startsWith('loc_') &&
+          typeof r.createdAt === 'number' &&
+          !seenSubmissions.has(r.id)
+        );
         reports = [...unsyncedLocal, ...firestoreReports];
 
+        // FIX 6: DETERMINISTIC STABLE SORT
         reports.sort((a, b) => {
           const tA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (typeof a.createdAt === 'number' ? a.createdAt : 0);
           const tB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (typeof b.createdAt === 'number' ? b.createdAt : 0);
