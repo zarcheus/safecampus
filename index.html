@@ -652,7 +652,7 @@
     <!-- Shown only while signed IN as admin -->
     <div id="adminBroadcastSection" style="display:none; margin-top: 8px; padding-top: 14px; border-top: 1px dashed var(--border);">
       <label style="color:var(--red-500); font-size:0.75rem; font-weight:800;">🚨 Activate Campus Emergency Broadcast</label>
-      <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:6px;">Type an incident message below and tap "Push Broadcast" to show the alert banner.</p>
+      <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:6px;">Type an incident message below and tap "Push Broadcast" to show the alert banner on every device.</p>
       <input type="text" id="adminBroadcastInput" placeholder="e.g. Caution: Wet floors near Science Lab 2. Exercise care." style="margin-top: 4px;" />
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button class="btn btn-primary" id="btnPublishBroadcast" type="button" style="font-size:0.75rem; flex:1;">Push Broadcast</button>
@@ -682,6 +682,7 @@
     onSnapshot,
     updateDoc,
     deleteDoc,
+    setDoc,
     doc,
     query,
     orderBy,
@@ -785,36 +786,75 @@
     });
   }
 
+  // The broadcast lives in ONE Firestore document so every device sees the same banner.
+  const broadcastDocRef = doc(db, 'settings', 'emergencyBroadcast');
+
+  function setLocalBroadcast(message) {
+    activeBroadcast = message;
+    if (message) localStorage.setItem('mahs_emergency_broadcast', message);
+    else localStorage.removeItem('mahs_emergency_broadcast');
+    renderEmergencyBanner();
+  }
+
+  // Returns 'shared' if saved to the server, 'local' if only this device got it.
+  async function saveBroadcast(message) {
+    setLocalBroadcast(message);
+    if (!navigator.onLine) return 'local';
+    try {
+      await setDoc(broadcastDocRef, {
+        message,
+        updatedAt: serverTimestamp(),
+        updatedBy: (auth.currentUser && auth.currentUser.email) || ''
+      });
+      return 'shared';
+    } catch (e) {
+      console.warn('Could not save broadcast to server:', e);
+      return 'local';
+    }
+  }
+
+  // Everyone (students included) listens, so a new/removed broadcast appears everywhere.
+  function initBroadcastListener() {
+    onSnapshot(
+      broadcastDocRef,
+      (snap) => {
+        setLocalBroadcast(snap.exists() ? String(snap.data().message || '') : '');
+      },
+      (error) => console.warn('Broadcast listener issue. Using local copy:', error)
+    );
+  }
+  initBroadcastListener();
+
   if (btnPublishBroadcast) {
-    btnPublishBroadcast.addEventListener('click', () => {
+    btnPublishBroadcast.addEventListener('click', async () => {
       if (!isAdmin) {
         alert('Admin authorization required.');
         return;
       }
       const newMsg = adminBroadcastInput.value.trim();
-      if (newMsg) {
-        activeBroadcast = newMsg;
-        localStorage.setItem('mahs_emergency_broadcast', activeBroadcast);
-        renderEmergencyBanner();
-        document.getElementById('adminModal').classList.remove('active');
-        showToast('🚨 Emergency alert banner activated!');
-      } else {
+      if (!newMsg) {
         alert('Please type what happened in the alert box before activating.');
+        return;
       }
+      const result = await saveBroadcast(newMsg);
+      document.getElementById('adminModal').classList.remove('active');
+      showToast(result === 'shared'
+        ? '🚨 Emergency alert sent to all devices!'
+        : '⚠️ Alert shown on THIS device only (could not reach the server).');
     });
   }
 
   if (btnClearBroadcast) {
-    btnClearBroadcast.addEventListener('click', () => {
+    btnClearBroadcast.addEventListener('click', async () => {
       if (!isAdmin) {
         alert('Admin authorization required.');
         return;
       }
-      activeBroadcast = '';
-      localStorage.removeItem('mahs_emergency_broadcast');
-      renderEmergencyBanner();
+      const result = await saveBroadcast('');
       document.getElementById('adminModal').classList.remove('active');
-      showToast('🧹 Emergency broadcast banner removed.');
+      showToast(result === 'shared'
+        ? '🧹 Emergency banner removed from all devices.'
+        : '⚠️ Banner removed on THIS device only (could not reach the server).');
     });
   }
 
