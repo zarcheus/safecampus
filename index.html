@@ -17,7 +17,6 @@
 <!-- EMAILJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-  // Initialize EmailJS with your Public Key
   (function() {
     emailjs.init("oF_zz1sRB2PxseCmc");
   })();
@@ -55,7 +54,6 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   body { background: var(--bg-main); color: var(--text-primary); line-height: 1.5; }
 
-  /* ANIMATIONS FOR IN PROGRESS STATE */
   @keyframes ping-dot {
     0% { transform: scale(1); opacity: 1; }
     75%, 100% { transform: scale(2.5); opacity: 0; }
@@ -71,7 +69,6 @@
     50% { opacity: 0.6; }
   }
 
-  /* DATA SAVER MODE STYLES */
   body.data-saver-mode header {
     background: var(--navy-900) !important;
   }
@@ -80,7 +77,6 @@
     display: none !important;
   }
 
-  /* EMERGENCY BROADCAST BANNER */
   .emergency-broadcast-banner {
     background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
     color: #ffffff; padding: 12px 24px; display: none; justify-content: space-between;
@@ -99,7 +95,6 @@
   }
   .broadcast-close:hover { opacity: 1; }
 
-  /* ADVISORY & NETWORK BAR */
   .advisory-bar {
     background: #1e293b; color: #f8fafc; padding: 8px 16px; font-size: 0.82rem; font-weight: 600;
     display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold-500);
@@ -114,7 +109,6 @@
   .net-online { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
   .net-offline { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
 
-  /* HEADER & BRANDING */
   header {
     background: url('https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/235259311_184194087105316_7652030335852235611_n.png?stp=dst-png&cstp=mx1640x924&ctp=s1640x924&_nc_cat=101&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeE2shuIEyruuD3Hxy9sASpP2DW5WmJXQ77YNblaYldDvttXnqGBnrizlKfnnByrWdYCEFH8bJi1DcJA54pGqbHS&_nc_ohc=uELPyLzrxYsQ7kNvwFQUzs9&_nc_oc=AdrAkzSLPThOOEZy50P7bVUzgjBYBBaiKupjFVttwUtG_U99m6F6HoeBkdaAmRxhkQ8&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=DwaBX0nbZ45GEiQaUSufjg&_nc_ss=7b2a8&oh=00_AQMeVqoxclgRKxvTKu6LDJ-neIsBuGAhgaTvOp90NRiobw&oe=6AC420F9') no-repeat center top;
     background-size: cover;
@@ -164,7 +158,6 @@
   .hero-text h2 span { color: var(--gold-400); }
   .hero-text p { max-width: 680px; opacity: 0.95; font-size: 0.95rem; text-shadow: 0 1px 4px rgba(0,0,0,0.85); color: #f1f5f9; }
 
-  /* SCHOOL INFO HUB BAR */
   .school-info-bar { max-width: 1280px; margin: 16px auto 0; padding: 0 24px; position: relative; z-index: 5; }
   .info-hub-card {
     background: rgba(11, 37, 69, 0.88); backdrop-filter: blur(10px); border: 1px solid rgba(244, 180, 26, 0.3);
@@ -175,7 +168,6 @@
   .info-hub-item i { font-size: 1.2rem; }
   .info-hub-item strong { color: var(--gold-400); display: block; font-size: 0.75rem; text-transform: uppercase; }
 
-  /* EMERGENCY HOTLINE STRIP */
   .hotline-strip {
     background: #fff; border-bottom: 1px solid var(--border); padding: 10px 24px; font-size: 0.8rem;
     display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px; color: var(--text-secondary);
@@ -183,7 +175,6 @@
   .hotline-chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--navy-800); }
   .hotline-chip span { color: var(--red-500); }
 
-  /* LAYOUT */
   .container { max-width: 1280px; margin: 24px auto 60px; padding: 0 24px; position: relative; z-index: 10; }
   .grid-layout { display: grid; grid-template-columns: 460px 1fr; gap: 28px; }
 
@@ -191,10 +182,9 @@
   .card-header h3 { font-size: 1.25rem; font-weight: 700; color: var(--navy-800); }
   .card-header p { font-size: 0.82rem; color: var(--text-secondary); margin-top: 2px; }
 
-  /* FORM STYLING */
   .form-group { margin-bottom: 16px; }
   label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--navy-800); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-  input[type="text"], input[type="date"], input[type="password"], select, textarea {
+  input[type="text"], input[type="email"], input[type="date"], input[type="password"], select, textarea {
     width: 100%; padding: 11px 14px; border: 2px solid var(--border); border-radius: var(--radius-md);
     font-size: 0.9rem; background: #f8fafc; color: var(--text-primary); transition: all 0.2s;
   }
@@ -236,7 +226,6 @@
 
   .checkbox-anon { display: flex; align-items: center; gap: 8px; font-size: 0.83rem; color: var(--text-secondary); cursor: pointer; }
 
-  /* BUTTON ACTION ROW */
   .submit-btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
   .submit-btn {
     width: 100%; padding: 14px; background: linear-gradient(135deg, var(--gold-500), var(--gold-600));
@@ -249,7 +238,6 @@
   }
   .sms-btn:hover { background: #0369a1; }
 
-  /* DASHBOARD METRICS */
   .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
   .metric-card { background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; text-align: center; position: relative; }
   .metric-card.highlight { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
@@ -262,7 +250,6 @@
   .metric-num { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--navy-900); }
   .metric-lbl { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-top: 6px; }
 
-  /* FEED CONTROLS & EXPORT TOOLBAR */
   .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
   .search-box { flex: 1; min-width: 180px; }
   .filter-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
@@ -272,7 +259,6 @@
   }
   .filter-pill.active { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
 
-  /* REPORT FEED LIST */
   .reports-feed { display: flex; flex-direction: column; gap: 14px; max-height: 620px; overflow-y: auto; padding-right: 4px; }
   .report-card {
     border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; background: #fff;
@@ -364,7 +350,6 @@
     background: #dc2626;
   }
 
-  /* ANALYTICS BAR CHART */
   .analytics-card { margin-top: 24px; padding: 18px; background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); }
   .chart-bars { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
   .chart-row { display: flex; align-items: center; gap: 10px; font-size: 0.78rem; font-weight: 700; color: var(--navy-800); }
@@ -373,7 +358,6 @@
   .chart-fill { height: 100%; background: var(--navy-600); border-radius: 999px; transition: width 0.4s ease; }
   .chart-val { width: 24px; font-size: 0.78rem; text-align: left; color: var(--text-secondary); }
 
-  /* MODALS & TOAST */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75);
     display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px);
@@ -454,7 +438,6 @@
     </div>
   </div>
 
-  <!-- SCHOOL INFORMATION HUB -->
   <div class="school-info-bar">
     <div class="info-hub-card">
       <div class="info-hub-item">
@@ -482,7 +465,6 @@
   </div>
 </header>
 
-<!-- EMERGENCY HOTLINE STRIP -->
 <div class="hotline-strip">
   <span>🚨 <strong>Rapid Emergency Contacts:</strong></span>
   <div class="hotline-chip">Clinic: <span>Local 102</span></div>
@@ -490,7 +472,6 @@
   <div class="hotline-chip">QC Emergency: <span>122</span></div>
 </div>
 
-<!-- MAIN CONTAINER -->
 <main class="container">
   <div class="grid-layout">
     
@@ -508,6 +489,15 @@
             type="text"
             id="reporterName"
             placeholder="e.g. Jay Martin Manaba (Grade 12 - STEM)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Your Email Address (For Confirmation & Updates)</label>
+          <input
+            type="email"
+            id="reporterEmail"
+            placeholder="e.g. reporter@gmail.com"
           />
           <div style="margin-top:8px;">
             <label class="checkbox-anon">
@@ -612,13 +602,10 @@
         </div>
       </div>
 
-      <!-- CATEGORY BREAKDOWN BARS -->
       <div class="analytics-card">
         <h4 style="font-size:0.9rem; color:var(--navy-800); margin-bottom:2px;">Hazard Category Breakdown</h4>
         <p style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:8px;">Live distribution of logged hazards across MAHS campus.</p>
-        <div class="chart-bars" id="categoryChartBars">
-          <!-- Dynamically populated category count bars -->
-        </div>
+        <div class="chart-bars" id="categoryChartBars"></div>
       </div>
 
       <div class="toolbar" style="margin-top:20px;">
@@ -652,7 +639,6 @@
       <input type="password" id="adminPasscode" placeholder="Enter admin passcode" />
     </div>
 
-    <!-- ADMIN BROADCAST CONTROL -->
     <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--border);">
       <label style="color:var(--red-500); font-size:0.75rem; font-weight:800;">🚨 Activate Campus Emergency Broadcast</label>
       <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:6px;">Type an incident message below and tap "Push Broadcast" to show the alert banner campus-wide.</p>
@@ -670,7 +656,6 @@
   </div>
 </div>
 
-<!-- TOAST BANNER -->
 <div id="toast">
   <span id="toastMsg">Action completed successfully.</span>
 </div>
@@ -724,7 +709,7 @@
 </script>
 
 <script>
-  let reports = [];
+  let reports = JSON.parse(localStorage.getItem('mahs_safecampus_db')) || [];
   let activeBroadcast = localStorage.getItem('mahs_emergency_broadcast') || '';
   let selectedCategory = 'Electrical';
   let activeFilter = 'All';
@@ -733,11 +718,17 @@
   let currentPhotoBase64 = null;
   let dataSaverActive = false;
 
+  // Auto-set default date field to today
+  const dateObservedElem = document.getElementById('dateObserved');
+  if (dateObservedElem) {
+    dateObservedElem.valueAsDate = new Date();
+  }
+
   function saveState() {
     localStorage.setItem('mahs_safecampus_db', JSON.stringify(reports));
   }
 
-  // ADMIN EMERGENCY BROADCAST BANNER LOGIC
+  // EMERGENCY BROADCAST LOGIC
   const emergencyBanner = document.getElementById('emergencyBroadcastBanner');
   const broadcastText = document.getElementById('broadcastText');
   const btnCloseBroadcast = document.getElementById('btnCloseBroadcast');
@@ -786,7 +777,7 @@
     });
   }
 
-  // CSV DATA EXPORT LOGIC
+  // CSV EXPORT
   const btnExportCSV = document.getElementById('btnExportCSV');
   if (btnExportCSV) {
     btnExportCSV.addEventListener('click', () => {
@@ -795,13 +786,14 @@
         return;
       }
 
-      const headers = ['Report ID', 'Reporter', 'Category', 'Building', 'Location', 'Date Observed', 'Severity', 'Status', 'Timestamp', 'Description'];
+      const headers = ['Report ID', 'Reporter', 'Email', 'Category', 'Building', 'Location', 'Date Observed', 'Severity', 'Status', 'Timestamp', 'Description'];
       const csvRows = [headers.join(',')];
 
       reports.forEach(r => {
         const row = [
-          r.id,
+          r.id || '',
           `"${(r.reporter || '').replace(/"/g, '""')}"`,
+          `"${(r.email || '').replace(/"/g, '""')}"`,
           `"${(r.category || '').replace(/"/g, '""')}"`,
           `"${(r.building || '').replace(/"/g, '""')}"`,
           `"${(r.location || '').replace(/"/g, '""')}"`,
@@ -826,7 +818,7 @@
     });
   }
 
-  // Network Status
+  // NETWORK STATUS
   function updateNetworkStatus() {
     const netBadge = document.getElementById('netBadge');
     if (navigator.onLine) {
@@ -835,14 +827,14 @@
     } else {
       netBadge.textContent = "🔴 Offline / No Signal";
       netBadge.className = "network-badge net-offline";
-      showToast("📶 Offline. Reports saved to phone storage.");
+      showToast("📶 Offline mode active. Reports saved locally.");
     }
   }
   window.addEventListener('online', updateNetworkStatus);
   window.addEventListener('offline', updateNetworkStatus);
   updateNetworkStatus();
 
-  // Admin Auth Handler
+  // ADMIN AUTH
   const btnAdminAuth = document.getElementById('btnAdminAuth');
   const adminModal = document.getElementById('adminModal');
   const btnCloseAdminModal = document.getElementById('btnCloseAdminModal');
@@ -892,7 +884,7 @@
     }
   });
 
-  // Low Data Saver Mode Toggle
+  // DATA SAVER
   const btnToggleDataSaver = document.getElementById('btnToggleDataSaver');
   if (btnToggleDataSaver) {
     btnToggleDataSaver.addEventListener('click', () => {
@@ -903,7 +895,7 @@
     });
   }
 
-  // SMS Fallback
+  // SMS FALLBACK
   const btnSMSFallback = document.getElementById('btnSMSFallback');
   if (btnSMSFallback) {
     btnSMSFallback.addEventListener('click', () => {
@@ -916,7 +908,7 @@
     });
   }
 
-  // Category Chips
+  // CATEGORY CHIPS
   document.querySelectorAll('#categoryChips .chip-item').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('#categoryChips .chip-item').forEach(c => c.classList.remove('active'));
@@ -925,7 +917,7 @@
     });
   });
 
-  // Filter Pills
+  // FILTER PILLS
   document.querySelectorAll('#filterPills .filter-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       document.querySelectorAll('#filterPills .filter-pill').forEach(p => p.classList.remove('active'));
@@ -935,7 +927,7 @@
     });
   });
 
-  // Search Input
+  // SEARCH INPUT
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -944,7 +936,7 @@
     });
   }
 
-  // Photo Upload & Removal
+  // PHOTO UPLOAD & PREVIEW
   const uploadZone = document.getElementById('uploadZone');
   const photoInput = document.getElementById('photoInput');
   const photoPreviewContainer = document.getElementById('photoPreviewContainer');
@@ -980,27 +972,35 @@
     });
   }
 
-  // Dynamic Anonymous Toggle Listener
+  // ANONYMOUS TOGGLE
   const liveReporterInput = document.getElementById('reporterName');
+  const liveEmailInput = document.getElementById('reporterEmail');
   const liveAnonToggle = document.getElementById('anonToggle');
+
   if (liveAnonToggle && liveReporterInput) {
     liveAnonToggle.addEventListener('change', () => {
       const isAnon = liveAnonToggle.checked;
       liveReporterInput.disabled = isAnon;
       liveReporterInput.required = !isAnon;
+      if (liveEmailInput) liveEmailInput.disabled = isAnon;
 
       if (isAnon) {
         liveReporterInput.value = '';
         liveReporterInput.placeholder = 'Submitting anonymously';
+        if (liveEmailInput) liveEmailInput.value = '';
       } else {
         liveReporterInput.placeholder = 'e.g. Jay Martin Manaba 12 - STEM';
       }
     });
   }
 
-  // HIGH-SEVERITY EMAIL ALERT FUNCTION (EMAILJS)
-  function sendHighSeverityEmailAlert(reportData) {
+  // DYNAMIC EMAIL CONFIRMATION ALERT
+  function sendEmailConfirmation(reportData) {
+    // Sends to user's specified email, or falls back to admin email if not specified
+    const recipient = reportData.email || "joshuagamingyt43@gmail.com";
+
     const templateParams = {
+      to_email: recipient,
       name: reportData.reporter || "Student / Staff",
       hazard_title: `${reportData.category} Hazard (${reportData.building})`,
       location: `${reportData.location}, ${reportData.building}`,
@@ -1010,20 +1010,21 @@
 
     emailjs.send("service_rx8gg0i", "template_x5ayago", templateParams)
       .then((res) => {
-        console.log("🚨 High-severity alert email sent via EmailJS!", res.status);
+        console.log("🚨 Confirmation email sent via EmailJS to:", recipient, res.status);
       })
       .catch((err) => {
         console.error("EmailJS alert failed:", err);
       });
   }
 
-  // Form Submit Handler
+  // FORM SUBMIT HANDLER
   const hazardForm = document.getElementById('hazardForm');
   if (hazardForm) {
     hazardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const reporterInput = document.getElementById('reporterName');
+      const emailInput = document.getElementById('reporterEmail');
       const anonToggle = document.getElementById('anonToggle');
       const buildingInput = document.getElementById('buildingZone');
       const locationInput = document.getElementById('location');
@@ -1044,7 +1045,9 @@
       const now = new Date();
 
       const newReport = {
+        id: 'loc_' + Date.now(),
         reporter: isAnon ? 'Anonymous' : reporterInput.value.trim(),
+        email: isAnon ? '' : (emailInput ? emailInput.value.trim() : ''),
         category: selectedCategory,
         building: buildingInput.value.trim(),
         location: locationInput.value.trim(),
@@ -1053,86 +1056,97 @@
         description: descInput.value.trim(),
         status: 'Open',
         timestamp:
-          now.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric'
-          }) +
+          now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
           ' • ' +
-          now.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit'
-          }),
+          now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
         photo: currentPhotoBase64,
-        adminNote: null,
-        createdAt: window.firebaseTools.serverTimestamp()
+        adminNote: null
       };
 
-      try {
-        const { collection, addDoc } = window.firebaseTools;
-        const reportsRef = collection(window.firebaseDB, 'hazardReports');
-
-        await addDoc(reportsRef, newReport);
-
-        // TRIGGER EMAILJS ALERT IF SEVERITY IS HIGH
-        if (newReport.severity === "High") {
-          sendHighSeverityEmailAlert(newReport);
+      let firestoreSaved = false;
+      if (window.firebaseTools && window.firebaseDB && navigator.onLine) {
+        try {
+          const { collection, addDoc, serverTimestamp } = window.firebaseTools;
+          const reportsRef = collection(window.firebaseDB, 'hazardReports');
+          const docRef = await addDoc(reportsRef, {
+            ...newReport,
+            createdAt: serverTimestamp()
+          });
+          newReport.id = docRef.id;
+          firestoreSaved = true;
+        } catch (error) {
+          console.warn('Firestore submission failed, falling back to local state:', error);
         }
-
-        hazardForm.reset();
-        if (liveReporterInput) {
-          liveReporterInput.disabled = false;
-          liveReporterInput.placeholder = 'e.g. Jay Martin Manaba (Grade 12 - STEM)';
-        }
-        currentPhotoBase64 = null;
-
-        if (photoPreviewContainer) {
-          photoPreviewContainer.style.display = 'none';
-        }
-        if (photoPreviewImg) {
-          photoPreviewImg.src = '';
-        }
-
-        showToast('🚀 Report submitted successfully!');
-      } catch (error) {
-        console.error('Firestore submit error:', error);
-        showToast('⚠️ Could not submit report. Check database security rules.');
       }
+
+      if (!firestoreSaved) {
+        reports.unshift(newReport);
+        saveState();
+        renderFeed();
+      }
+
+      // Send email copy to user if email address was entered or high severity
+      if (newReport.email || newReport.severity === "High") {
+        sendEmailConfirmation(newReport);
+      }
+
+      hazardForm.reset();
+      if (dateObservedElem) dateObservedElem.valueAsDate = new Date();
+      if (liveReporterInput) {
+        liveReporterInput.disabled = false;
+        liveReporterInput.placeholder = 'e.g. Jay Martin Manaba (Grade 12 - STEM)';
+      }
+      if (liveEmailInput) {
+        liveEmailInput.disabled = false;
+      }
+      currentPhotoBase64 = null;
+
+      if (photoPreviewContainer) photoPreviewContainer.style.display = 'none';
+      if (photoPreviewImg) photoPreviewImg.src = '';
+
+      showToast(firestoreSaved ? '🚀 Report submitted!' : '💾 Report saved locally!');
     });
   }
 
-  // UPDATE REPORT STATUS (FIRESTORE SYNC)
+  // UPDATE REPORT STATUS
   window.updateReportStatus = async function(reportId, newStatus) {
-    try {
-      const { doc, updateDoc } = window.firebaseTools;
-
-      await updateDoc(
-        doc(window.firebaseDB, "hazardReports", reportId),
-        { status: newStatus }
-      );
-
-      if (newStatus === 'In Progress') {
-        showToast('Status set to IN PROGRESS');
-      } else {
-        showToast(`Status updated to ${newStatus}`);
+    let cloudUpdated = false;
+    if (window.firebaseTools && window.firebaseDB && navigator.onLine) {
+      try {
+        const { doc, updateDoc } = window.firebaseTools;
+        await updateDoc(doc(window.firebaseDB, "hazardReports", reportId), { status: newStatus });
+        cloudUpdated = true;
+      } catch (error) {
+        console.warn('Firestore status update failed, updating locally:', error);
       }
-
-    } catch (error) {
-      console.error('Firestore status update error:', error);
-      showToast('Could not update report status.');
     }
+
+    const report = reports.find(r => r.id === reportId);
+    if (report) {
+      report.status = newStatus;
+      saveState();
+      renderFeed();
+    }
+
+    showToast(`Status updated to ${newStatus}`);
   };
 
-  // ADMIN DELETE REPORT FUNCTION (FIRESTORE SYNC)
+  // DELETE REPORT
   window.deleteReport = async function(reportId) {
     if (confirm('Are you sure you want to delete this filed hazard report?')) {
-      try {
-        const { doc, deleteDoc } = window.firebaseTools;
-        await deleteDoc(doc(window.firebaseDB, "hazardReports", reportId));
-        showToast('🗑️ Report deleted successfully.');
-      } catch (error) {
-        console.error('Firestore delete error:', error);
-        showToast('Could not delete report from cloud.');
+      if (window.firebaseTools && window.firebaseDB && navigator.onLine) {
+        try {
+          const { doc, deleteDoc } = window.firebaseTools;
+          await deleteDoc(doc(window.firebaseDB, "hazardReports", reportId));
+        } catch (error) {
+          console.warn('Firestore delete failed:', error);
+        }
       }
+
+      reports = reports.filter(r => r.id !== reportId);
+      saveState();
+      renderFeed();
+      showToast('🗑️ Report deleted successfully.');
     }
   };
 
@@ -1210,7 +1224,7 @@
           <div class="report-body">${r.description || ''}</div>
           ${r.photo ? `<img src="${r.photo}" class="report-photo-thumb" alt="Hazard evidence" />` : ''}
           <div class="report-meta">
-            <span>👤 ${r.reporter || 'Anonymous'}</span>
+            <span>👤 ${r.reporter || 'Anonymous'} ${r.email ? `(${r.email})` : ''}</span>
             <span>🕒 ${r.timestamp || 'Just now'}</span>
           </div>
 
@@ -1222,7 +1236,7 @@
                 <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
                 <option value="Resolved" ${r.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
               </select>
-              <button type="button" class="btn-delete-report" onclick="deleteReport('${r.id}')">🗑️ Delete</button>
+              <button type="button" class="btn-delete-report" onclick="deleteReport('${r.id}')">🗑️️ Delete</button>
             </div>
           ` : ''}
         </div>
@@ -1272,8 +1286,9 @@
     setTimeout(() => toast.classList.remove('show'), 3500);
   }
 
-  // FIRESTORE REAL-TIME SNAPSHOT LISTENER
+  // FIRESTORE REAL-TIME LISTENER
   function initFirestoreListener() {
+    if (!window.firebaseTools || !window.firebaseDB) return;
     const { collection, onSnapshot } = window.firebaseTools;
     const reportsRef = collection(window.firebaseDB, 'hazardReports');
 
@@ -1285,7 +1300,6 @@
           ...doc.data()
         }));
 
-        // Sort by timestamp/creation client-side safely
         reports.sort((a, b) => {
           const tA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : Date.now();
           const tB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : Date.now();
@@ -1296,18 +1310,12 @@
         renderFeed();
       },
       (error) => {
-        console.error('Firestore listener error:', error);
-        showToast('⚠️ Sync issue with cloud. Using local cache.');
-        const localData = localStorage.getItem('mahs_safecampus_db');
-        if (localData) {
-          reports = JSON.parse(localData);
-          renderFeed();
-        }
+        console.warn('Firestore listener issue. Falling back to local cache:', error);
+        renderFeed();
       }
     );
   }
 
-  // Wait briefly for firebaseTools module setup then listen
   setTimeout(() => {
     if (window.firebaseTools) {
       initFirestoreListener();
