@@ -180,6 +180,12 @@
     font-size: 0.9rem; background: #f8fafc; color: var(--text-primary); transition: all 0.2s;
   }
   input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy-600); background: #fff; }
+  input:disabled {
+    background-color: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed;
+    opacity: 0.75;
+  }
 
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   
@@ -479,7 +485,11 @@
       <form id="hazardForm">
         <div class="form-group">
           <label>Reporter Name / Section *</label>
-          <input type="text" id="reporterName" placeholder="e.g. Jay Martin Manaba (Grade 12 - STEM)" required />
+          <input
+            type="text"
+            id="reporterName"
+            placeholder="e.g. Jay Martin Manaba (Grade 12 - STEM)"
+          />
           <div style="margin-top:8px;">
             <label class="checkbox-anon">
               <input type="checkbox" id="anonToggle" />
@@ -553,8 +563,8 @@
         </div>
 
         <div class="submit-btn-row">
-          <button type="submit" class="submit-btn" id="submitBtn">🚀 SUBMIT INCIDENT REPORT</button>
-          <button type="button" class="sms-btn" id="btnSMSFallback">📱 NO LOAD / NO INTERNET? SEND VIA SMS TEXT</button>
+          <button type="submit" class="submit-btn" id="submitBtn">SUBMIT INCIDENT REPORT</button>
+          <button type="button" class="sms-btn" id="btnSMSFallback">NO LOAD / NO INTERNET? SEND VIA SMS TEXT</button>
         </div>
       </form>
     </section>
@@ -951,6 +961,24 @@
     });
   }
 
+  // Dynamic Anonymous Toggle Listener
+  const liveReporterInput = document.getElementById('reporterName');
+  const liveAnonToggle = document.getElementById('anonToggle');
+  if (liveAnonToggle && liveReporterInput) {
+    liveAnonToggle.addEventListener('change', () => {
+      const isAnon = liveAnonToggle.checked;
+      liveReporterInput.disabled = isAnon;
+      liveReporterInput.required = !isAnon;
+
+      if (isAnon) {
+        liveReporterInput.value = '';
+        liveReporterInput.placeholder = 'Submitting anonymously';
+      } else {
+        liveReporterInput.placeholder = 'e.g. Jay Martin Manaba (Grade 12 - STEM)';
+      }
+    });
+  }
+
   // Form Submit Handler
   const hazardForm = document.getElementById('hazardForm');
   if (hazardForm) {
@@ -966,6 +994,15 @@
       const sevRadio = document.querySelector('input[name="severity"]:checked');
 
       const isAnon = anonToggle ? anonToggle.checked : false;
+
+      if (!isAnon && (!reporterInput || !reporterInput.value.trim())) {
+        if (reporterInput) {
+          reporterInput.required = true;
+          reporterInput.reportValidity();
+        }
+        return;
+      }
+
       const now = new Date();
 
       const newReport = {
@@ -999,6 +1036,10 @@
         await addDoc(reportsRef, newReport);
 
         hazardForm.reset();
+        if (liveReporterInput) {
+          liveReporterInput.disabled = false;
+          liveReporterInput.placeholder = 'e.g. Jay Martin Manaba (Grade 12 - STEM)';
+        }
         currentPhotoBase64 = null;
 
         if (photoPreviewContainer) {
