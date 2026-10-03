@@ -4,7 +4,25 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SafeCampus Enterprise — Melchora Aquino High School Hazard Intelligence</title>
+
+<!-- PWA META & MANIFEST LINKS -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#07172b">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="SafeCampus" />
+<link rel="apple-touch-icon" href="https://www.image2url.com/r2/default/images/1790992898471-f6feb2c4-085e-4a41-a7be-9adec071c2c1.png" />
 <link rel="icon" type="image/png" href="https://www.image2url.com/r2/default/images/1790992898471-f6feb2c4-085e-4a41-a7be-9adec071c2c1.png" />
+
+<!-- EMAILJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+  // Initialize EmailJS with your Public Key
+  (function() {
+    emailjs.init("oF_zz1sRB2PxseCmc");
+  })();
+</script>
+
 <style>
   :root {
     --navy-900: #07172b;
@@ -975,9 +993,28 @@
         liveReporterInput.value = '';
         liveReporterInput.placeholder = 'Submitting anonymously';
       } else {
-        liveReporterInput.placeholder = 'e.g. Jay Martin Manaba (Grade 12 - STEM)';
+        liveReporterInput.placeholder = 'e.g. Jay Martin Manaba 12 - STEM';
       }
     });
+  }
+
+  // HIGH-SEVERITY EMAIL ALERT FUNCTION (EMAILJS)
+  function sendHighSeverityEmailAlert(reportData) {
+    const templateParams = {
+      name: reportData.reporter || "Student / Staff",
+      hazard_title: `${reportData.category} Hazard (${reportData.building})`,
+      location: `${reportData.location}, ${reportData.building}`,
+      severity: reportData.severity,
+      description: reportData.description
+    };
+
+    emailjs.send("service_rx8gg0i", "template_x5ayago", templateParams)
+      .then((res) => {
+        console.log("🚨 High-severity alert email sent via EmailJS!", res.status);
+      })
+      .catch((err) => {
+        console.error("EmailJS alert failed:", err);
+      });
   }
 
   // Form Submit Handler
@@ -1035,6 +1072,11 @@
         const reportsRef = collection(window.firebaseDB, 'hazardReports');
 
         await addDoc(reportsRef, newReport);
+
+        // TRIGGER EMAILJS ALERT IF SEVERITY IS HIGH
+        if (newReport.severity === "High") {
+          sendHighSeverityEmailAlert(newReport);
+        }
 
         hazardForm.reset();
         if (liveReporterInput) {
@@ -1273,6 +1315,16 @@
       renderFeed();
     }
   }, 300);
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then((reg) => console.log('Service Worker registered!', reg))
+        .catch((err) => console.error('Service Worker registration failed:', err));
+    });
+  }
 </script>
 </body>
 </html>
