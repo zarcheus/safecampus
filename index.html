@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="SafeCampus" />
-<link rel="apple-touch-icon" href="https://www.image2url.com/r2/default/images/1790992898471-f6feb2c4-085e-4a41-a7be-9adec071c2c1.png" />
-<link rel="icon" type="image/png" href="https://www.image2url.com/r2/default/images/1790992898471-f6feb2c4-085e-4a41-a7be-9adec071c2c1.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="icon" type="image/png" href="icon-192.png" />
 
 <!-- EMAILJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -112,7 +112,7 @@
   .net-offline { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
 
   header {
-    background: var(--navy-900) url('https://www.image2url.com/r2/default/images/1791014782492-4157bedf-de91-4ba9-8a5b-154420c83aae.png') no-repeat center top;
+    background: var(--navy-900) url('cover.png') no-repeat center top;
     background-size: cover;
     color: #fff; padding-bottom: 70px; position: relative; overflow: hidden;
     border-bottom: 4px solid var(--gold-500);
@@ -417,7 +417,7 @@
   <div class="top-nav">
     <div class="brand">
       <div class="brand-logo">
-        <img src="https://www.image2url.com/r2/default/images/1790992898471-f6feb2c4-085e-4a41-a7be-9adec071c2c1.png" id="schoolLogoImg" alt="MAHS Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%230b2545\'><circle cx=\'50\' cy=\'50\' r=\'46\' stroke=\'%23f4b41a\' stroke-width=\'6\'/><text x=\'50%\' y=\'58%\' font-size=\'22\' text-anchor=\'middle\' fill=\'%23f4b41a\' font-weight=\'900\' font-family=\'sans-serif\'>MAHS</text></svg>';" />
+        <img src="logo.png" id="schoolLogoImg" alt="MAHS Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%230b2545\'><circle cx=\'50\' cy=\'50\' r=\'46\' stroke=\'%23f4b41a\' stroke-width=\'6\'/><text x=\'50%\' y=\'58%\' font-size=\'22\' text-anchor=\'middle\' fill=\'%23f4b41a\' font-weight=\'900\' font-family=\'sans-serif\'>MAHS</text></svg>';" />
       </div>
       <div class="brand-text">
         <h1>MELCHORA AQUINO HIGH SCHOOL</h1>
@@ -1534,7 +1534,7 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker.register('./sw.js', { scope: './' })
         .then((reg) => console.log('Service Worker registered!', reg))
         .catch((err) => console.error('Service Worker registration failed:', err));
     });
