@@ -110,7 +110,7 @@
   .net-offline { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
 
   header {
-    background: url('https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/235259311_184194087105316_7652030335852235611_n.png?stp=dst-png&cstp=mx1640x924&ctp=s1640x924&_nc_cat=101&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeE2shuIEyruuD3Hxy9sASpP2DW5WmJXQ77YNblaYldDvttXnqGBnrizlKfnnByrWdYCEFH8bJi1DcJA54pGqbHS&_nc_ohc=uELPyLzrxYsQ7kNvwFQUzs9&_nc_oc=AdrAkzSLPThOOEZy50P7bVUzgjBYBBaiKupjFVttwUtG_U99m6F6HoeBkdaAmRxhkQ8&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=DwaBX0nbZ45GEiQaUSufjg&_nc_ss=7b2a8&oh=00_AQMeVqoxclgRKxvTKu6LDJ-neIsBuGAhgaTvOp90NRiobw&oe=6AC420F9') no-repeat center top;
+    background: var(--navy-900) url('https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/235259311_184194087105316_7652030335852235611_n.png?stp=dst-png&cstp=mx1640x924&ctp=s1640x924&_nc_cat=101&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeE2shuIEyruuD3Hxy9sASpP2DW5WmJXQ77YNblaYldDvttXnqGBnrizlKfnnByrWdYCEFH8bJi1DcJA54pGqbHS&_nc_ohc=uELPyLzrxYsQ7kNvwFQUzs9&_nc_oc=AdrAkzSLPThOOEZy50P7bVUzgjBYBBaiKupjFVttwUtG_U99m6F6HoeBkdaAmRxhkQ8&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=DwaBX0nbZ45GEiQaUSufjg&_nc_ss=7b2a8&oh=00_AQMeVqoxclgRKxvTKu6LDJ-neIsBuGAhgaTvOp90NRiobw&oe=6AC420F9') no-repeat center top;
     background-size: cover;
     color: #fff; padding-bottom: 70px; position: relative; overflow: hidden;
     border-bottom: 4px solid var(--gold-500);
@@ -118,7 +118,7 @@
 
   header::before {
     content: ""; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(7, 23, 43, 0.7) 0%, rgba(11, 37, 69, 0.6) 60%, rgba(7, 23, 43, 0.9) 100%);
+    background: linear-gradient(180deg, rgba(7, 23, 43, 0.85) 0%, rgba(11, 37, 69, 0.75) 60%, rgba(7, 23, 43, 0.95) 100%);
     pointer-events: none; z-index: 1;
   }
   header .top-nav, header .hero { position: relative; z-index: 2; }
@@ -327,7 +327,7 @@
     animation: ping-dot 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
 
-  .report-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+  .report-body { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; word-break: break-word; }
   .report-photo-thumb { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; margin-top: 4px; }
   .report-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid #f1f5f9; padding-top: 8px; }
   .admin-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); background: #f8fafc; padding: 8px; border-radius: 6px; flex-wrap: wrap; }
@@ -484,7 +484,7 @@
 
       <form id="hazardForm">
         <div class="form-group">
-          <label>Reporter Name / Section *</label>
+          <label>Reporter Name / Section</label>
           <input
             type="text"
             id="reporterName"
@@ -508,7 +508,7 @@
         </div>
 
         <div class="form-group">
-          <label>Hazard Category *</label>
+          <label>Hazard Category</label>
           <div class="chips-grid" id="categoryChips">
             <div class="chip-item active" data-cat="Electrical">⚡ Electrical</div>
             <div class="chip-item" data-cat="Structural">🏚️ Structural</div>
@@ -521,22 +521,22 @@
 
         <div class="row-2 form-group">
           <div>
-            <label>Building / Area </label>
+            <label>Building / Area</label>
             <input type="text" id="buildingZone" placeholder="e.g. Bautista Building" required />
           </div>
           <div>
-            <label>Specific Location / Room </label>
-            <input type="text" id="location" placeholder="e.g. Room 302, 3rd Floor" required />
+            <label>Specific Location / Room</label>
+            <input type="text" id="location" placeholder="e.g. Room 696, 3rd Floor" required />
           </div>
         </div>
 
         <div class="form-group">
-          <label>Date Observed </label>
+          <label>Date Observed</label>
           <input type="date" id="dateObserved" required />
         </div>
 
         <div class="form-group">
-          <label>Severity Level </label>
+          <label>Severity Level</label>
           <div class="sev-group">
             <label>
               <input type="radio" name="severity" value="Low" />
@@ -660,10 +660,9 @@
   <span id="toastMsg">Action completed successfully.</span>
 </div>
 
-<!-- Firebase CDN -->
+<!-- Firebase CDN & Main Application Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
   import {
     getFirestore,
     collection,
@@ -693,7 +692,6 @@
 
   window.firebaseApp = app;
   window.firebaseDB = db;
-
   window.firebaseTools = {
     collection,
     addDoc,
@@ -706,9 +704,23 @@
     serverTimestamp,
     setDoc
   };
+
+  // Dispatch custom event to notify script logic that Firebase is ready
+  window.dispatchEvent(new Event('firebase-ready'));
 </script>
 
 <script>
+  // Helper to escape HTML and prevent XSS vulnerabilities
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   let reports = JSON.parse(localStorage.getItem('mahs_safecampus_db')) || [];
   let activeBroadcast = localStorage.getItem('mahs_emergency_broadcast') || '';
   let selectedCategory = 'Electrical';
@@ -904,7 +916,7 @@
       const desc = document.getElementById('description').value || 'Safety Hazard';
       
       const smsBody = encodeURIComponent(`MAHS HAZARD REPORT:\nCat: ${selectedCategory}\nBldg: ${bld}\nLoc: ${loc}\nDesc: ${desc}`);
-      window.location.href = `sms:09171237233?body=${smsBody}`;
+      window.location.href = `sms:+639171237233?body=${smsBody}`;
     });
   }
 
@@ -989,14 +1001,13 @@
         liveReporterInput.placeholder = 'Submitting anonymously';
         if (liveEmailInput) liveEmailInput.value = '';
       } else {
-        liveReporterInput.placeholder = 'e.g. Jay Martin Manaba 12 - STEM';
+        liveReporterInput.placeholder = 'e.g. Jay Martin Manaba (Grade 12 - STEM)';
       }
     });
   }
 
   // DYNAMIC EMAIL CONFIRMATION ALERT
   function sendEmailConfirmation(reportData) {
-    // Sends to user's specified email, or falls back to admin email if not specified
     const recipient = reportData.email || "joshuagamingyt43@gmail.com";
 
     const templateParams = {
@@ -1085,7 +1096,6 @@
         renderFeed();
       }
 
-      // Send email copy to user if email address was entered or high severity
       if (newReport.email || newReport.severity === "High") {
         sendEmailConfirmation(newReport);
       }
@@ -1110,12 +1120,10 @@
 
   // UPDATE REPORT STATUS
   window.updateReportStatus = async function(reportId, newStatus) {
-    let cloudUpdated = false;
     if (window.firebaseTools && window.firebaseDB && navigator.onLine) {
       try {
         const { doc, updateDoc } = window.firebaseTools;
         await updateDoc(doc(window.firebaseDB, "hazardReports", reportId), { status: newStatus });
-        cloudUpdated = true;
       } catch (error) {
         console.warn('Firestore status update failed, updating locally:', error);
       }
@@ -1207,25 +1215,34 @@
         `;
       } else {
         const badgeClass = r.status === 'Open' ? 'bg-open' : 'bg-resolved';
-        statusBadgeHtml = `<span class="badge-tag ${badgeClass}">${r.status || 'Open'}</span>`;
+        statusBadgeHtml = `<span class="badge-tag ${badgeClass}">${escapeHtml(r.status || 'Open')}</span>`;
       }
 
+      const safeCategory = escapeHtml(r.category || 'General');
+      const safeLocation = escapeHtml(r.location || 'N/A');
+      const safeBuilding = escapeHtml(r.building || 'N/A');
+      const safeDescription = escapeHtml(r.description || '');
+      const safeReporter = escapeHtml(r.reporter || 'Anonymous');
+      const safeEmail = escapeHtml(r.email || '');
+      const safeTimestamp = escapeHtml(r.timestamp || 'Just now');
+      const safeSeverity = escapeHtml(r.severity || 'Medium');
+
       return `
-        <div class="report-card sev-${r.severity || 'Medium'} ${isInProgress ? 'status-in-progress' : ''}">
+        <div class="report-card sev-${safeSeverity} ${isInProgress ? 'status-in-progress' : ''}">
           <div class="report-top">
             <div class="report-title">
-              <span>${r.category || 'General'}</span> — <span>${r.location || 'N/A'} (${r.building || 'N/A'})</span>
+              <span>${safeCategory}</span> — <span>${safeLocation} (${safeBuilding})</span>
             </div>
             <div class="report-badges">
-              <span class="badge-tag bg-${(r.severity || 'med').toLowerCase()}">${r.severity || 'Medium'}</span>
+              <span class="badge-tag bg-${safeSeverity.toLowerCase()}">${safeSeverity}</span>
               ${statusBadgeHtml}
             </div>
           </div>
-          <div class="report-body">${r.description || ''}</div>
+          <div class="report-body">${safeDescription}</div>
           ${r.photo ? `<img src="${r.photo}" class="report-photo-thumb" alt="Hazard evidence" />` : ''}
           <div class="report-meta">
-            <span>👤 ${r.reporter || 'Anonymous'} ${r.email ? `(${r.email})` : ''}</span>
-            <span>🕒 ${r.timestamp || 'Just now'}</span>
+            <span>👤 ${safeReporter} ${safeEmail ? `(${safeEmail})` : ''}</span>
+            <span>🕒 ${safeTimestamp}</span>
           </div>
 
           ${isAdmin ? `
@@ -1236,7 +1253,7 @@
                 <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
                 <option value="Resolved" ${r.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
               </select>
-              <button type="button" class="btn-delete-report" onclick="deleteReport('${r.id}')">🗑️️ Delete</button>
+              <button type="button" class="btn-delete-report" onclick="deleteReport('${r.id}')">🗑 Delete</button>
             </div>
           ` : ''}
         </div>
@@ -1267,7 +1284,7 @@
       const percentage = Math.round((count / maxCount) * 100);
       return `
         <div class="chart-row">
-          <div class="chart-label">${cat}</div>
+          <div class="chart-label">${escapeHtml(cat)}</div>
           <div class="chart-track">
             <div class="chart-fill" style="width: ${percentage}%;"></div>
           </div>
@@ -1301,8 +1318,8 @@
         }));
 
         reports.sort((a, b) => {
-          const tA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : Date.now();
-          const tB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : Date.now();
+          const tA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt || Date.now());
+          const tB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt || Date.now());
           return tB - tA;
         });
 
@@ -1316,13 +1333,13 @@
     );
   }
 
-  setTimeout(() => {
-    if (window.firebaseTools) {
-      initFirestoreListener();
-    } else {
-      renderFeed();
-    }
-  }, 300);
+  // Bind listener on firebase readiness or fall back cleanly
+  window.addEventListener('firebase-ready', () => {
+    initFirestoreListener();
+  });
+
+  // Initial render for immediate local storage display
+  renderFeed();
 </script>
 
 <script>
