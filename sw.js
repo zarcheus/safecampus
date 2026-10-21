@@ -1,5 +1,5 @@
 // Bump this number whenever you want to force every device to drop its old cache.
-const CACHE_NAME = 'safecampus-cache-v8';
+const CACHE_NAME = 'safecampus-cache-v9';
 // Relative paths so it works from a sub-folder like zarcheus.github.io/safecampus/
 const ASSETS_TO_CACHE = ['./', './index.html', './manifest.json', './logo.png'];
 const PAGE_TIMEOUT_MS = 4000; // on slow signal, fall back to the saved page after 4s

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>SafeCampus — Melchora Aquino High School</title>
 
 <script>(function(){var d=document.documentElement,t="auto",p={};try{t=localStorage.getItem("sc-theme")||"auto";p=JSON.parse(localStorage.getItem("sc-prefs")||"{}");}catch(e){}if(t==="auto"){try{t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}catch(e){t="light";}}d.setAttribute("data-theme",t);if(p.text)d.setAttribute("data-text",p.text);if(p.cover===false)d.classList.add("no-cover");if(p.calm)d.classList.add("calm");})();</script>
@@ -273,6 +273,54 @@
 
   /* logo is built into the page (no download), so Data Saver can keep showing it */
   body.data-saver-mode .brand-logo img, body.data-saver-mode .menu-head img { display:block !important; }
+
+  /* ===== Phone layout: banner cover, shorter header, quick access ===== */
+  .cta-report, .info-toggle, .minibar { display:none; }
+  html { -webkit-text-size-adjust:100%; }
+  * { -webkit-tap-highlight-color:transparent; }
+  @media (max-width:640px) {
+    html { scroll-behavior:smooth; }
+    /* cover = full uncropped banner, pinned; the page slides over it as you scroll */
+    .cover { position:sticky; top:0; height:auto; background:#fff; }
+    html[data-theme="dark"] .cover { background:var(--bg); }
+    html[data-theme] .cover::after { display:none; }
+    .cover-frame { position:relative; inset:auto; aspect-ratio:16/9; }
+    html[data-theme] .cover-frame img { object-fit:cover; object-position:center; }
+    header { background:var(--bg); margin-top:-24px; border-radius:24px 24px 0 0; box-shadow:0 -10px 28px rgba(15,23,42,.16); }
+    html[data-theme="dark"] header { box-shadow:0 -10px 28px rgba(0,0,0,.5); }
+    html.no-cover header, body.data-saver-mode header { margin-top:0; border-radius:0; box-shadow:none; }
+    .hotline-strip { background:var(--bg); }
+    /* shorter top: smaller heading, one-tap Report button, school info collapsed */
+    .top-nav { padding-top:16px; }
+    .hero { padding:16px 16px 0; }
+    .hero-text h2 { font-size:1.95rem; margin-bottom:10px; }
+    .hero-text p { font-size:.92rem; }
+    .cta-report { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; min-height:50px; border-radius:999px; background:var(--accent-fill); color:#fff; font-weight:700; font-size:.98rem; text-decoration:none; box-shadow:0 6px 18px rgba(26,52,176,.28); }
+    .info-toggle { display:flex; align-items:center; justify-content:space-between; width:calc(100% - 32px); margin:18px 16px 0; min-height:48px; padding:0 16px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font:inherit; font-size:.9rem; font-weight:700; cursor:pointer; }
+    .info-toggle span { transition:transform .2s; }
+    header.info-open .info-toggle span { transform:rotate(180deg); }
+    header:not(.info-open) .school-info-bar { display:none; }
+    .hotline-strip { flex-wrap:nowrap; overflow-x:auto; gap:10px; margin-top:12px; padding-bottom:6px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+    .hotline-strip::-webkit-scrollbar { display:none; }
+    .hotline-strip > span { white-space:nowrap; }
+    .hotline-chip { white-space:nowrap; background:var(--paper); border:1px solid var(--line); padding:9px 14px; border-radius:999px; }
+    .hotline-chip a { color:inherit; text-decoration:none; }
+    main.container { margin-top:20px; margin-bottom:56px; }
+    .reports-feed { max-height:none; overflow:visible; }
+    /* comfortable thumbs + no iOS zoom when tapping a field */
+    .btn { min-height:44px; }
+    input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size:16px; }
+    #toast { bottom:calc(20px + env(safe-area-inset-bottom)); }
+    .menu-body { padding-bottom:calc(22px + env(safe-area-inset-bottom)); }
+    #reportCard { scroll-margin-top:68px; }
+    /* mini bar: menu + Report, appears once the header is scrolled away */
+    .minibar { display:flex; align-items:center; gap:10px; position:fixed; top:0; left:0; right:0; z-index:900; padding:calc(env(safe-area-inset-top) + 8px) 12px 8px; background:var(--paper); border-bottom:1px solid var(--line); box-shadow:0 6px 20px rgba(15,23,42,.1); transform:translateY(-115%); visibility:hidden; transition:transform .25s ease, visibility 0s .25s; }
+    .minibar.show { transform:none; visibility:visible; transition:transform .25s ease; }
+    .minibar img { width:30px; height:30px; border-radius:50%; background:#fff; border:1px solid var(--line); }
+    .minibar strong { font-size:.95rem; }
+    .mb-menu { width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:var(--fill); color:var(--ink); display:inline-flex; align-items:center; justify-content:center; padding:0; cursor:pointer; }
+    .mb-report { margin-left:auto; display:inline-flex; align-items:center; min-height:40px; padding:0 16px; border-radius:999px; background:var(--accent-fill); color:#fff; font-weight:700; font-size:.88rem; text-decoration:none; }
+  }
 </style>
 </head>
 <body>
@@ -325,9 +373,11 @@
     <div class="hero-text">
       <h2>Spot a hazard?<br>Report it in a minute.</h2>
       <p>Report hazards instantly, monitor campus maintenance progress, and assist facilities management in keeping Melchora Aquino High School safe.</p>
+      <a class="cta-report" href="#reportCard">Report a hazard <span aria-hidden="true">&#8595;</span></a>
     </div>
   </div>
 
+  <button class="info-toggle" id="btnInfo" type="button" aria-expanded="false">&#127979; School info <span aria-hidden="true">&#9662;</span></button>
   <div class="school-info-bar">
     <div class="info-hub-card">
       <div class="info-hub-item">
@@ -358,15 +408,15 @@
 <div class="hotline-strip">
   <span>🚨 <strong>Rapid Emergency Contacts:</strong></span>
   <div class="hotline-chip">Clinic: <span>Local 102</span></div>
-  <div class="hotline-chip">DRRM Hotline: <span>0917-123-7233</span></div>
-  <div class="hotline-chip">QC Emergency: <span>122</span></div>
+  <div class="hotline-chip">DRRM Hotline: <a href="tel:09171237233"><span>0917-123-7233</span></a></div>
+  <div class="hotline-chip">QC Emergency: <a href="tel:122"><span>122</span></a></div>
 </div>
 
 <main class="container">
   <div class="grid-layout">
     
     <!-- LEFT PANEL: REPORT FORM -->
-    <section class="card form-card">
+    <section class="card form-card" id="reportCard">
       <div class="card-header">
         <h3>Report a Safety Hazard</h3>
         <p>Fill in details to alert school maintenance. (Works offline & low-data!)</p>
@@ -556,6 +606,11 @@
   </div>
 </div>
 
+<div class="minibar" id="miniBar">
+  <button type="button" class="mb-menu" id="btnMenu2" aria-label="Open menu" tabindex="-1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <img id="miniLogo" alt="" width="30" height="30"><strong>SafeCampus</strong>
+  <a class="mb-report" href="#reportCard" tabindex="-1">+ Report</a>
+</div>
 <div class="menu-backdrop" id="menuBackdrop"></div>
 <aside class="side-menu" id="sideMenu" aria-hidden="true" aria-label="Menu and settings">
   <div class="menu-head">
@@ -599,8 +654,19 @@
 /* cover fades out as you scroll (skipped when the phone asks for reduced motion) */
 (function(){var c=document.getElementById('cover');if(!c)return;var t=false;
 if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-function u(){t=false;var p=Math.min(Math.max(window.scrollY/(window.innerHeight*.55),0),1);
+function u(){t=false;var d=(window.matchMedia&&matchMedia('(max-width:640px)').matches)?c.offsetHeight*.85:window.innerHeight*.55,p=Math.min(Math.max(window.scrollY/(d||1),0),1);
 c.style.opacity=(1-p).toFixed(3);c.style.transform='translateY('+(-p*48).toFixed(1)+'px)';c.style.visibility=p>=1?'hidden':'visible';}
+addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u);}},{passive:true});addEventListener('resize',u);u();})();
+</script>
+<script>
+/* phones: collapsible school info, floating mini bar */
+(function(){var hd=document.querySelector('header'),ib=document.getElementById('btnInfo');
+if(ib&&hd)ib.addEventListener('click',function(){var o=hd.classList.toggle('info-open');ib.setAttribute('aria-expanded',String(o));});
+var mb=document.getElementById('miniBar'),m2=document.getElementById('btnMenu2'),lg=document.getElementById('schoolLogoImg'),ml=document.getElementById('miniLogo');
+if(ml&&lg)ml.src=lg.src;
+if(m2)m2.addEventListener('click',function(){var b=document.getElementById('btnMenu');if(b)b.click();});
+if(!mb)return;var t=false,mq=window.matchMedia?matchMedia('(max-width:640px)'):null;
+function u(){t=false;var on=!!(mq&&mq.matches)&&window.scrollY>340;mb.classList.toggle('show',on);[m2,mb.querySelector('.mb-report')].forEach(function(e){if(e)e.tabIndex=on?0:-1;});}
 addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u);}},{passive:true});addEventListener('resize',u);u();})();
 </script>
 <script type="module">
